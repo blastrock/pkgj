@@ -52,7 +52,7 @@ static const MenuEntry menu_entries[] = {
         {MenuRefresh, "PSV Games", 1},
         {MenuRefresh, "PSV Updates", 2},
         {MenuRefresh, "PSV DLCs", 4},
-        {MenuRefresh, "PSX games", 8},
+        {MenuRefresh, "PSX Games", 8},
 };
 
 int pkgi_menu_is_open(void)
