@@ -2,9 +2,8 @@ extern "C" {
 #include "pkgi.h"
 #include "pkgi_utils.h"
 }
+#include "pkgi_scoped_exit.hpp"
 #include "pkgi_download.hpp"
-
-#include <boost/scope_exit.hpp>
 
 #include <stddef.h>
 
@@ -184,14 +183,14 @@ int Download::download_head(const uint8_t* rif)
     pkgi_snprintf(
             item_path, sizeof(item_path), "%s/sce_sys/package/head.bin", root);
 
-    BOOST_SCOPE_EXIT_ALL(&)
+    ScopedExit scoped_exit_1([&]()
     {
         if (item_file)
         {
             pkgi_close(item_file);
             item_file = NULL;
         }
-    };
+    });
 
     if (download_resume)
     {
@@ -399,14 +398,14 @@ int Download::download_files(void)
 {
     LOG("downloading encrypted files");
 
-    BOOST_SCOPE_EXIT_ALL(&)
+    ScopedExit scoped_exit_1([&]()
     {
         if (item_file)
         {
             pkgi_close(item_file);
             item_file = NULL;
         }
-    };
+    });
 
     for (uint32_t index = 0; index < index_count; index++)
     {
@@ -573,14 +572,14 @@ int Download::download_tail(void)
 {
     LOG("downloading tail.bin");
 
-    BOOST_SCOPE_EXIT_ALL(&)
+    ScopedExit scoped_exit_1([&]()
     {
         if (item_file)
         {
             pkgi_close(item_file);
             item_file = NULL;
         }
-    };
+    });
 
     pkgi_strncpy(item_name, sizeof(item_name), "Finishing...");
     pkgi_snprintf(
@@ -731,13 +730,13 @@ int Download::pkgi_download(
     info_start = pkgi_time_msec();
     info_update = info_start + 1000;
 
-    BOOST_SCOPE_EXIT_ALL(&)
+    ScopedExit scoped_exit_1([&]()
     {
         if (http)
         {
             pkgi_http_close(http);
         }
-    };
+    });
 
     if (!download_head(rif))
         return 0;

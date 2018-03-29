@@ -1,6 +1,6 @@
 #include "pkgi_downloader.hpp"
 
-#include <boost/scope_exit.hpp>
+#include "pkgi_scoped_exit.hpp"
 
 #include "pkgi_download.hpp"
 
@@ -123,10 +123,10 @@ void Downloader::run()
 
 void Downloader::do_download(const DownloadItem& item)
 {
-    BOOST_SCOPE_EXIT_ALL(&)
+    ScopedExit scoped_exit_1([&]()
     {
         refresh(item.content);
-    };
+    });
 
     ScopeProcessLock _;
     LOG("downloading %s", item.name.c_str());

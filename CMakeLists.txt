@@ -34,14 +34,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -flto")
 
 set(VITA_MKSFOEX_FLAGS "${VITA_MKSFOEX_FLAGS} -d PARENTAL_LEVEL=1")
 
-ExternalProject_Add(Boost
-  URL https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.bz2
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND ""
-)
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/Boost-prefix/src/Boost)
-
 function(add_assets target)
   set(result)
   foreach(in_f ${ARGN})
@@ -77,8 +69,6 @@ add_executable(pkgj
   pkgi_zrif.c
   puff.c
 )
-
-add_dependencies(pkgj Boost)
 
 target_link_libraries(pkgj
   vita2d
