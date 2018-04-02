@@ -1019,19 +1019,19 @@ pkgi_http* pkgi_http_get(const char* url, const char* content, uint64_t offset)
 
     char path[256];
 
+    strcpy(path, pkgi_get_temp_folder());
+    const char* lastslash = strrchr(url, '/');
+    if (lastslash)
+        strcat(path, lastslash);
+    else
+    {
+        strcat(path, "/");
+        strcat(path, url);
+    }
+    http->fd = sceIoOpen(path, SCE_O_RDONLY, 0777);
+
     if (content)
     {
-        strcpy(path, pkgi_get_temp_folder());
-        const char* lastslash = strrchr(url, '/');
-        if (lastslash)
-            strcat(path, lastslash);
-        else
-        {
-            strcat(path, "/");
-            strcat(path, url);
-        }
-
-        http->fd = sceIoOpen(path, SCE_O_RDONLY, 0777);
         if (http->fd < 0)
         {
             LOG("%s not found, trying shorter path", path);
@@ -1044,10 +1044,6 @@ pkgi_http* pkgi_http_get(const char* url, const char* content, uint64_t offset)
         }
 
         http->fd = sceIoOpen(path, SCE_O_RDONLY, 0777);
-    }
-    else
-    {
-        http->fd = -1;
     }
 
     if (http->fd >= 0)
