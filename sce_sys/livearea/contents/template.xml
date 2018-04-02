@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<livearea style="a1" format-ver="01.00" content-rev="1">
+<livearea style="a4" format-ver="01.00" content-rev="1">
 	<livearea-background>
 		<image>bg.png</image>
 	</livearea-background>
@@ -8,4 +8,14 @@
 	<gate>
 		<startup-image>startup.png</startup-image>
 	</gate>
+	<frame id="frame3">
+		<liveitem>
+			<text origin="background" line-align="center" margin-bottom="1">
+				<str color="#ffffff" size="30" bold="on" shadow="on">PKGj v0.12</str>
+				<str size="25" bold="on" shadow="on">　
+				</str>
+				<str size="22" shadow="on">PKG download and installation directly on Vita</str>
+			</text>
+		</liveitem>
+	</frame>
 </livearea>
