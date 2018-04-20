@@ -48,10 +48,11 @@ static const MenuEntry menu_entries[] = {
         {MenuFilter, "Japan", DbFilterRegionJPN},
         {MenuFilter, "USA", DbFilterRegionUSA},
 
-        {MenuRefresh, "Refresh games", 1},
-        {MenuRefresh, "Refresh updates", 2},
-        {MenuRefresh, "Refresh DLCs", 4},
-        {MenuRefresh, "Refresh PSX games", 8},
+        {MenuText, "Refresh:", 0},
+        {MenuRefresh, "PSV Games", 1},
+        {MenuRefresh, "PSV Updates", 2},
+        {MenuRefresh, "PSV DLCs", 4},
+        {MenuRefresh, "PSX Games", 8},
 };
 
 int pkgi_menu_is_open(void)
