@@ -29,10 +29,10 @@ Get latest version as [vpk file here][pkgj_latest].
 
 Setup games databases URLs in `ux0:pkgi/config.txt`. The file format is the following:
 
-    url_games https://thesite/games.tsv
-    url_updates https://thesite/updates.tsv
-    url_dlcs https://thesite/dlcs.tsv
-    url_psx_games https://thesite/psxgames.tsv
+    url_games http://thesite/games.tsv
+    url_updates http://thesite/updates.tsv
+    url_dlcs http://thesite/dlcs.tsv
+    url_psx_games http://thesite/psxgames.tsv
 
 Then start the application and you are ready to go.
 
