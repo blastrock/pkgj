@@ -36,6 +36,7 @@ extern "C" {
 #include <stdio.h>
 #include <string.h>
 
+char partition[]="ux0:";
 static vita2d_pgf* g_font;
 
 static SceKernelLwMutexWork g_dialog_lock;
@@ -622,18 +623,41 @@ int pkgi_battery_is_charging()
     return scePowerIsBatteryCharging();
 }
 
-uint64_t pkgi_get_free_space(void)
+const char* pkgi_get_partition(void)
+{
+
+    if ((partition != NULL) && (partition[0] == '\0')) {
+        return "ux0:";
+    }else{
+        return partition;
+    }
+
+}
+void pkgi_set_partition_ux0()
+{
+    strcpy(partition, "ux0:");
+}
+void pkgi_set_partition_ur0()
+{
+    strcpy(partition, "ur0:");
+}
+void pkgi_set_partition_uma0()
+{
+    strcpy(partition, "uma0:");
+}
+uint64_t pkgi_get_free_space(const char* RequestedPartition)
 {
     if (pkgi_is_unsafe_mode())
     {
         SceIoDevInfo info{};
-        sceIoDevctl("ux0:", 0x3001, NULL, 0, &info, sizeof(info));
+        sceIoDevctl(RequestedPartition, 0x3001, NULL, 0, &info, sizeof(info));
         return info.free_size;
     }
     else
     {
         uint64_t free, max;
-        char dev[] = "ux0:";
+        char *dev;
+		strcpy(dev,RequestedPartition);
         sceAppMgrGetDevInfo(dev, &max, &free);
         return free;
     }
@@ -646,7 +670,18 @@ const char* pkgi_get_config_folder(void)
 
 const char* pkgi_get_temp_folder(void)
 {
-    return "ux0:pkgi";
+
+	//cant find a proper way to return pkgi_get_partition() + "pkgi" as it goes null when accesed by Download::pkgi_download on pkgi_download.cpp
+	if(strcmp(pkgi_get_partition(),"ux0:") == 0){
+		return "ux0:pkgi";
+	} else if(strcmp(pkgi_get_partition(),"ur0:") == 0){
+		return "ur0:pkgi";
+	} else if(strcmp(pkgi_get_partition(),"uma0:") == 0){
+		return "uma0:pkgi";
+	} else{
+		return "ux0:pkgi";
+	}
+
 }
 
 const char* pkgi_get_app_folder(void)
@@ -695,8 +730,8 @@ int pkgi_dlc_is_installed(const char* content)
 int pkgi_psp_is_installed(const char* content)
 {
     char path[128];
-    snprintf(path, sizeof(path), "ux0:pspemu/ISO/%.9s.iso", content + 7);
-
+    //snprintf(path, sizeof(path), "ux0:pspemu/ISO/%.9s.iso", content + 7);
+	snprintf(path, sizeof(path), "%spspemu/ISO/%.9s.iso", pkgi_get_partition(),content + 7);
     SceIoStat stat;
     return sceIoGetstat(path, &stat) >= 0;
 }
@@ -704,8 +739,8 @@ int pkgi_psp_is_installed(const char* content)
 int pkgi_psx_is_installed(const char* content)
 {
     char path[128];
-    snprintf(path, sizeof(path), "ux0:pspemu/PSP/GAME/%.9s", content + 7);
-
+    //snprintf(path, sizeof(path), "ux0:pspemu/PSP/GAME/%.9s", content + 7);
+	snprintf(path, sizeof(path), "%spspemu/PSP/GAME/%.9s", pkgi_get_partition(),content + 7);
     SceIoStat stat;
     return sceIoGetstat(path, &stat) >= 0;
 }
@@ -807,12 +842,12 @@ void pkgi_install_pspgame(const char* contentid)
             contentid);
 
     char dest[128];
-    snprintf(dest, sizeof(dest), "ux0:pspemu/ISO");
+    snprintf(dest, sizeof(dest), "%spspemu/ISO",pkgi_get_partition());
     pkgi_mkdirs(dest);
 
-    snprintf(dest, sizeof(dest), "ux0:pspemu/ISO/%.9s.iso", contentid + 7);
+    snprintf(dest, sizeof(dest), "%spspemu/ISO/%.9s.iso",pkgi_get_partition(), contentid + 7);
 
-    LOG("installing psp game at %s", path);
+    LOG("installing psp game at %s to %s", path, dest);
     int res = sceIoRename(path, dest);
     if (res < 0)
         throw std::runtime_error(fmt::format(
@@ -828,12 +863,12 @@ void pkgi_install_psxgame(const char* contentid)
     snprintf(path, sizeof(path), "%s/%s", pkgi_get_temp_folder(), contentid);
 
     char dest[128];
-    snprintf(dest, sizeof(dest), "ux0:pspemu/PSP/GAME");
+    snprintf(dest, sizeof(dest), "%spspemu/PSP/GAME",pkgi_get_temp_folder());
     pkgi_mkdirs(dest);
 
-    snprintf(dest, sizeof(dest), "ux0:pspemu/PSP/GAME/%.9s", contentid + 7);
+    snprintf(dest, sizeof(dest), "%spspemu/PSP/GAME/%.9s",pkgi_get_partition(), contentid + 7);
 
-    LOG("installing psx game at %s", path);
+    LOG("installing psx game at %s to %s", path,dest);
     int res = sceIoRename(path, dest);
     if (res < 0)
         throw std::runtime_error(fmt::format(
