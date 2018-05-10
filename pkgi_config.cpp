@@ -117,19 +117,20 @@ Config pkgi_load_config()
     config.filter = DbFilterAll;
     config.no_version_check = 0;
     config.install_psp_as_pbp = 0;
+    config.install_psp_psx_location = "ux0:";
 
     char data[4096];
     char path[256];
     pkgi_snprintf(
             path, sizeof(path), "%s/config.txt", pkgi_get_config_folder());
-    LOG("config location: %s", path);
+    //LOG("config location: %s", path);
 
     int loaded = pkgi_load(path, data, sizeof(data) - 1);
     if (loaded > 0)
     {
         data[loaded] = '\n';
 
-        LOG("config.txt loaded, parsing");
+        //LOG("config.txt loaded, parsing");
         char* text = data;
         char* end = data + loaded + 1;
 
@@ -184,6 +185,8 @@ Config pkgi_load_config()
                 config.no_version_check = 1;
             else if (pkgi_stricmp(key, "install_psp_as_pbp") == 0)
                 config.install_psp_as_pbp = 1;
+            else if (pkgi_stricmp(key, "install_psp_psx_location") == 0)
+                            config.install_psp_psx_location = value;
         }
     }
     else
@@ -257,6 +260,12 @@ void pkgi_save_config(const Config& config)
                 sizeof(data) - len,
                 "url_psp_games %s\n",
                 config.psp_games_url.c_str());
+    if (!config.install_psp_psx_location.empty())
+            len += pkgi_snprintf(
+                    data + len,
+                    sizeof(data) - len,
+                    "install_psp_psx_location %s\n",
+                    config.install_psp_psx_location.c_str());
     len += pkgi_snprintf(
             data + len, sizeof(data) - len, "sort %s\n", sort_str(config.sort));
     len += pkgi_snprintf(

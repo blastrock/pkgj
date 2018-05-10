@@ -15,6 +15,8 @@ extern "C" {
 
 #include <stddef.h>
 
+#include "cstring"
+
 #define PKGI_UPDATE_URL \
     "https://api.github.com/repos/blastrock/pkgj/releases/latest"
 
@@ -139,6 +141,13 @@ static void pkgi_friendly_size(char* text, uint32_t textlen, int64_t size)
                 "%.2f " PKGI_UTF8_GB,
                 size / 1024.f / 1024.f / 1024.f);
     }
+}
+
+void RefreshGames(const char* url, Mode set_mode ){
+    current_url = url;
+    state = StateRefreshing;
+    mode = set_mode;
+    pkgi_start_thread("refresh_thread", &pkgi_refresh_thread);
 }
 
 static void pkgi_do_main(Downloader& downloader, pkgi_input* input)
@@ -631,8 +640,14 @@ static void pkgi_do_tail(Downloader& downloader)
     }
     pkgi_draw_text(0, second_line, PKGI_COLOR_TEXT_TAIL, text);
 
+	//get free space of partition only if looking at psx or psp games else show ux
     char size[64];
-    pkgi_friendly_size(size, sizeof(size), pkgi_get_free_space());
+	if(strcmp(current_url,config.psx_games_url.c_str())== 0 || strcmp(current_url,config.psp_games_url.c_str())== 0){
+		pkgi_friendly_size(size, sizeof(size), pkgi_get_free_space(pkgi_get_partition()));
+	}else{
+		pkgi_friendly_size(size, sizeof(size), pkgi_get_free_space("ux0:"));
+	}
+
 
     char free[64];
     pkgi_snprintf(free, sizeof(free), "Free: %s", size);
@@ -859,34 +874,19 @@ int main()
                     pkgi_save_config(config);
                     break;
                 case MenuResultRefreshGames:
-                    current_url = config.games_url.c_str();
-                    state = StateRefreshing;
-                    mode = ModeGames;
-                    pkgi_start_thread("refresh_thread", &pkgi_refresh_thread);
+					RefreshGames(config.games_url.c_str(),ModeGames);
                     break;
                 case MenuResultRefreshUpdates:
-                    current_url = config.updates_url.c_str();
-                    state = StateRefreshing;
-                    mode = ModeUpdates;
-                    pkgi_start_thread("refresh_thread", &pkgi_refresh_thread);
+					RefreshGames(config.updates_url.c_str(),ModeUpdates);
                     break;
                 case MenuResultRefreshDlcs:
-                    current_url = config.dlcs_url.c_str();
-                    state = StateRefreshing;
-                    mode = ModeDlcs;
-                    pkgi_start_thread("refresh_thread", &pkgi_refresh_thread);
+					RefreshGames(config.dlcs_url.c_str(),ModeDlcs);
                     break;
                 case MenuResultRefreshPsxGames:
-                    current_url = config.psx_games_url.c_str();
-                    state = StateRefreshing;
-                    mode = ModePsxGames;
-                    pkgi_start_thread("refresh_thread", &pkgi_refresh_thread);
+					RefreshGames(config.psx_games_url.c_str(),ModePsxGames);
                     break;
                 case MenuResultRefreshPspGames:
-                    current_url = config.psp_games_url.c_str();
-                    state = StateRefreshing;
-                    mode = ModePspGames;
-                    pkgi_start_thread("refresh_thread", &pkgi_refresh_thread);
+					RefreshGames(config.psp_games_url.c_str(),ModePspGames);
                     break;
                 }
             }
