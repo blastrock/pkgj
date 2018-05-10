@@ -874,19 +874,19 @@ int main()
                     pkgi_save_config(config);
                     break;
                 case MenuResultRefreshGames:
-					RefreshGames(config.games_url.c_str(),ModeGames);
+                    RefreshGames(config.games_url.c_str(),ModeGames);
                     break;
                 case MenuResultRefreshUpdates:
-					RefreshGames(config.updates_url.c_str(),ModeUpdates);
+                    RefreshGames(config.updates_url.c_str(),ModeUpdates);
                     break;
                 case MenuResultRefreshDlcs:
-					RefreshGames(config.dlcs_url.c_str(),ModeDlcs);
+                    RefreshGames(config.dlcs_url.c_str(),ModeDlcs);
                     break;
                 case MenuResultRefreshPsxGames:
-					RefreshGames(config.psx_games_url.c_str(),ModePsxGames);
+                    RefreshGames(config.psx_games_url.c_str(),ModePsxGames);
                     break;
                 case MenuResultRefreshPspGames:
-					RefreshGames(config.psp_games_url.c_str(),ModePspGames);
+                    RefreshGames(config.psp_games_url.c_str(),ModePspGames);
                     break;
                 }
             }
