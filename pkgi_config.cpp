@@ -123,14 +123,14 @@ Config pkgi_load_config()
     char path[256];
     pkgi_snprintf(
             path, sizeof(path), "%s/config.txt", pkgi_get_config_folder());
-    //LOG("config location: %s", path);
+    LOG("config location: %s", path);
 
     int loaded = pkgi_load(path, data, sizeof(data) - 1);
     if (loaded > 0)
     {
         data[loaded] = '\n';
 
-        //LOG("config.txt loaded, parsing");
+        LOG("config.txt loaded, parsing");
         char* text = data;
         char* end = data + loaded + 1;
 

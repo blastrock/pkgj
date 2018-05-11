@@ -626,11 +626,11 @@ int pkgi_battery_is_charging()
 const char* pkgi_get_partition(void)
 {
     Config config = pkgi_load_config();
-    const char* partition = config.install_psp_psx_location.c_str();
-    if ((partition == NULL) || (partition[0] == '\0')) {
+    std::string partition = config.install_psp_psx_location;
+    if (partition.empty()) {
         return "ux0:";
     }else{
-        return partition;
+        return partition.c_str();
     }
 
 }
@@ -648,7 +648,7 @@ uint64_t pkgi_get_free_space(const char* requested_partition)
     else
     {
         uint64_t free, max;
-        char* dev;
+        char* dev= NULL;
 		strcpy(dev,requested_partition);
         sceAppMgrGetDevInfo(dev, &max, &free);
         return free;
@@ -805,13 +805,12 @@ void pkgi_install_update(const char* contentid)
 
 void pkgi_install_pspgame(const char* contentid)
 {
-    LOG("Installing psx game");
+    LOG("Installing a PSP/PSX game");
     const auto path = fmt::format("{}/{}", pkgi_get_temp_folder(), contentid);
     const auto dest = fmt::format("{}pspemu/PSP/GAME/{:.9}",pkgi_get_partition(), contentid + 7);
 
-    const auto mdir = fmt::format("{}pspemu/PSP/GAME",pkgi_get_partition());
-    char* dir = strdup(mdir.c_str());
-    pkgi_mkdirs(dir);
+    const auto dir = fmt::format("{}pspemu/PSP/GAME",pkgi_get_partition());
+    pkgi_mkdirs((char *)dir.c_str());
 
     LOG("installing psx game at %s to %s", path.c_str(),dest.c_str());
     int res = sceIoRename(path.c_str(), dest.c_str());
@@ -831,9 +830,8 @@ void pkgi_install_pspgame_as_iso(const char* contentid)
     const auto pspkey = fmt::format("{}/PSP-KEY.EDAT", path);
     const auto isodest = fmt::format("{}pspemu/ISO/{:.9}.iso",pkgi_get_partition(), contentid + 7);
 
-    const auto mdir = fmt::format("{}pspemu/ISO",pkgi_get_partition());
-    char* dir = strdup(mdir.c_str());
-    pkgi_mkdirs(dir);
+    const auto dir = fmt::format("{}pspemu/ISO",pkgi_get_partition());
+    pkgi_mkdirs((char *)dir.c_str());
 
 
     LOG("installing psp game at %s to %s", path.c_str(),dest.c_str());

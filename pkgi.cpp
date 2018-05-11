@@ -15,7 +15,7 @@ extern "C" {
 
 #include <stddef.h>
 
-#include "cstring"
+#include <cstring>
 
 #define PKGI_UPDATE_URL \
     "https://api.github.com/repos/blastrock/pkgj/releases/latest"
@@ -143,7 +143,7 @@ static void pkgi_friendly_size(char* text, uint32_t textlen, int64_t size)
     }
 }
 
-void RefreshGames(const char* url, Mode set_mode ){
+void refresh_games(const char* url, Mode set_mode ){
     current_url = url;
     state = StateRefreshing;
     mode = set_mode;
@@ -640,13 +640,13 @@ static void pkgi_do_tail(Downloader& downloader)
     }
     pkgi_draw_text(0, second_line, PKGI_COLOR_TEXT_TAIL, text);
 
-	//get free space of partition only if looking at psx or psp games else show ux
+	//get free space of partition only if looking at psx or psp games else show ux0:
     char size[64];
-	if(strcmp(current_url,config.psx_games_url.c_str())== 0 || strcmp(current_url,config.psp_games_url.c_str())== 0){
-		pkgi_friendly_size(size, sizeof(size), pkgi_get_free_space(pkgi_get_partition()));
-	}else{
-		pkgi_friendly_size(size, sizeof(size), pkgi_get_free_space("ux0:"));
-	}
+    if (pkgi_db_get_mode() == ModePsxGames || pkgi_db_get_mode() == ModePspGames){
+	    pkgi_friendly_size(size, sizeof(size), pkgi_get_free_space(pkgi_get_partition()));
+    }else{
+	    pkgi_friendly_size(size, sizeof(size), pkgi_get_free_space("ux0:"));
+    }
 
 
     char free[64];
@@ -874,19 +874,19 @@ int main()
                     pkgi_save_config(config);
                     break;
                 case MenuResultRefreshGames:
-                    RefreshGames(config.games_url.c_str(),ModeGames);
+                    refresh_games(config.games_url.c_str(),ModeGames);
                     break;
                 case MenuResultRefreshUpdates:
-                    RefreshGames(config.updates_url.c_str(),ModeUpdates);
+                    refresh_games(config.updates_url.c_str(),ModeUpdates);
                     break;
                 case MenuResultRefreshDlcs:
-                    RefreshGames(config.dlcs_url.c_str(),ModeDlcs);
+                    refresh_games(config.dlcs_url.c_str(),ModeDlcs);
                     break;
                 case MenuResultRefreshPsxGames:
-                    RefreshGames(config.psx_games_url.c_str(),ModePsxGames);
+                    refresh_games(config.psx_games_url.c_str(),ModePsxGames);
                     break;
                 case MenuResultRefreshPspGames:
-                    RefreshGames(config.psp_games_url.c_str(),ModePspGames);
+                    refresh_games(config.psp_games_url.c_str(),ModePspGames);
                     break;
                 }
             }
