@@ -1,6 +1,7 @@
 extern "C" {
 #include "pkgi.h"
 #include "pkgi_style.h"
+#include "pkgi_db.h"
 }
 #include "pkgi_config.hpp"
 #include "pkgi_http.hpp"
@@ -648,7 +649,7 @@ uint64_t pkgi_get_free_space(const char* requested_partition)
     else
     {
         uint64_t free, max;
-        char* dev= NULL;
+        char* dev= "";
 		strcpy(dev,requested_partition);
         sceAppMgrGetDevInfo(dev, &max, &free);
         return free;
@@ -662,17 +663,21 @@ const char* pkgi_get_config_folder(void)
 
 const char* pkgi_get_temp_folder(void)
 {
-
-	//cant find a proper way to return pkgi_get_partition() + "pkgi" as it goes null when accesed by Download::pkgi_download on pkgi_download.cpp
-	if(strcmp(pkgi_get_partition(),"ux0:") == 0){
-		return "ux0:pkgi";
-	} else if(strcmp(pkgi_get_partition(),"ur0:") == 0){
-		return "ur0:pkgi";
-	} else if(strcmp(pkgi_get_partition(),"uma0:") == 0){
-		return "uma0:pkgi";
-	} else{
-		return "ux0:pkgi";
-	}
+    if (pkgi_db_get_mode() == ModePsxGames || pkgi_db_get_mode() == ModePspGames){
+        //cant find a proper way to return pkgi_get_partition() + "pkgi" as it goes null when accesed by Download::pkgi_download on pkgi_download.cpp
+        LOG("pkgi_get_partition(): %s",pkgi_get_partition());
+        if(strcmp(pkgi_get_partition(),"ux0:") == 0){
+            return "ux0:pkgi";
+        } else if(strcmp(pkgi_get_partition(),"ur0:") == 0){
+            return "ur0:pkgi";
+        } else if(strcmp(pkgi_get_partition(),"uma0:") == 0){
+            return "uma0:pkgi";
+        } else{
+            return "ux0:pkgi";
+        }
+    }else{
+        return "ux0:pkgi";
+    }
 }
 const char* pkgi_get_app_folder(void)
 {

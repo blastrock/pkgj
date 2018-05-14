@@ -143,7 +143,7 @@ static void pkgi_friendly_size(char* text, uint32_t textlen, int64_t size)
     }
 }
 
-void refresh_games(const char* url, Mode set_mode ){
+static void pkgi_refresh_games(const char* url, Mode set_mode ){
     current_url = url;
     state = StateRefreshing;
     mode = set_mode;
@@ -874,19 +874,19 @@ int main()
                     pkgi_save_config(config);
                     break;
                 case MenuResultRefreshGames:
-                    refresh_games(config.games_url.c_str(),ModeGames);
+                    pkgi_refresh_games(config.games_url.c_str(),ModeGames);
                     break;
                 case MenuResultRefreshUpdates:
-                    refresh_games(config.updates_url.c_str(),ModeUpdates);
+                    pkgi_refresh_games(config.updates_url.c_str(),ModeUpdates);
                     break;
                 case MenuResultRefreshDlcs:
-                    refresh_games(config.dlcs_url.c_str(),ModeDlcs);
+                    pkgi_refresh_games(config.dlcs_url.c_str(),ModeDlcs);
                     break;
                 case MenuResultRefreshPsxGames:
-                    refresh_games(config.psx_games_url.c_str(),ModePsxGames);
+                    pkgi_refresh_games(config.psx_games_url.c_str(),ModePsxGames);
                     break;
                 case MenuResultRefreshPspGames:
-                    refresh_games(config.psp_games_url.c_str(),ModePspGames);
+                    pkgi_refresh_games(config.psp_games_url.c_str(),ModePspGames);
                     break;
                 }
             }
