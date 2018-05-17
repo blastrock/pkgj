@@ -626,14 +626,18 @@ int pkgi_battery_is_charging()
 
 const char* pkgi_get_partition(void)
 {
+    //function also accesed by pkgi.cpp to show free space of relevant partition
     Config config = pkgi_load_config();
     std::string partition = config.install_psp_psx_location;
     if (partition.empty()) {
         return "ux0:";
+    }else if(strcmp(partition.c_str(),"ur0:") == 0){
+        return "ur0:";
+    } else if(strcmp(partition.c_str(),"uma0:") == 0){
+        return "uma0:";
     }else{
-        return partition.c_str();
+        return "ux0:";
     }
-
 }
 
 uint64_t pkgi_get_free_space(const char* requested_partition)
