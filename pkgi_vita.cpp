@@ -1,7 +1,9 @@
 extern "C" {
 #include "pkgi.h"
 #include "pkgi_style.h"
+#include "pkgi_db.h"
 }
+#include "pkgi_config.hpp"
 #include "pkgi_http.hpp"
 
 #include <fmt/format.h>
@@ -622,18 +624,37 @@ int pkgi_battery_is_charging()
     return scePowerIsBatteryCharging();
 }
 
-uint64_t pkgi_get_free_space(void)
+const char* pkgi_get_partition(void)
 {
+    //function also accesed by pkgi.cpp to show free space of relevant partition
+    Config config = pkgi_load_config();
+    std::string partition = config.install_psp_psx_location;
+    if (partition.empty()) {
+        return "ux0:";
+    }else if(strcmp(partition.c_str(),"ur0:") == 0){
+        return "ur0:";
+    } else if(strcmp(partition.c_str(),"uma0:") == 0){
+        return "uma0:";
+    }else{
+        return "ux0:";
+    }
+}
+
+uint64_t pkgi_get_free_space(const char* requested_partition)
+{
+
+
     if (pkgi_is_unsafe_mode())
     {
         SceIoDevInfo info{};
-        sceIoDevctl("ux0:", 0x3001, NULL, 0, &info, sizeof(info));
+        sceIoDevctl(requested_partition, 0x3001, NULL, 0, &info, sizeof(info));
         return info.free_size;
     }
     else
     {
         uint64_t free, max;
-        char dev[] = "ux0:";
+        char dev[16];
+        strncpy(dev, requested_partition, sizeof(dev));
         sceAppMgrGetDevInfo(dev, &max, &free);
         return free;
     }
@@ -646,9 +667,22 @@ const char* pkgi_get_config_folder(void)
 
 const char* pkgi_get_temp_folder(void)
 {
-    return "ux0:pkgi";
+    if (pkgi_db_get_mode() == ModePsxGames || pkgi_db_get_mode() == ModePspGames){
+        //cant find a proper way to return pkgi_get_partition() + "pkgi" as it goes null when accesed by Download::pkgi_download on pkgi_download.cpp
+        LOG("pkgi_get_partition(): %s",pkgi_get_partition());
+        if(strcmp(pkgi_get_partition(),"ux0:") == 0){
+            return "ux0:pkgi";
+        } else if(strcmp(pkgi_get_partition(),"ur0:") == 0){
+            return "ur0:pkgi";
+        } else if(strcmp(pkgi_get_partition(),"uma0:") == 0){
+            return "uma0:pkgi";
+        } else{
+            return "ux0:pkgi";
+        }
+    }else{
+        return "ux0:pkgi";
+    }
 }
-
 const char* pkgi_get_app_folder(void)
 {
     return "ux0:app";
@@ -679,17 +713,17 @@ int pkgi_dlc_is_installed(const char* content)
 
 int pkgi_psp_is_installed(const char* content)
 {
-    return pkgi_file_exists(fmt::format("ux0:pspemu/ISO/{:.9}.iso", content + 7)
+    return pkgi_file_exists(fmt::format("{}pspemu/ISO/{:.9}.iso", pkgi_get_partition(),content + 7)
                                     .c_str()) ||
            pkgi_file_exists(
-                   fmt::format("ux0:pspemu/PSP/GAME/{:.9}", content + 7)
+                   fmt::format("{}pspemu/PSP/GAME/{:.9}",pkgi_get_partition(), content + 7)
                            .c_str());
 }
 
 int pkgi_psx_is_installed(const char* content)
 {
     return pkgi_file_exists(
-            fmt::format("ux0:pspemu/PSP/GAME/{:.9}", content + 7).c_str());
+            fmt::format("{}pspemu/PSP/GAME/{:.9}", pkgi_get_partition(),content + 7).c_str());
 }
 
 void pkgi_install(const char* contentid)
@@ -780,13 +814,14 @@ void pkgi_install_update(const char* contentid)
 
 void pkgi_install_pspgame(const char* contentid)
 {
+    LOG("Installing a PSP/PSX game");
     const auto path = fmt::format("{}/{}", pkgi_get_temp_folder(), contentid);
-    const auto dest = fmt::format("ux0:pspemu/PSP/GAME/{:.9}", contentid + 7);
+    const auto dest = fmt::format("{}pspemu/PSP/GAME/{:.9}",pkgi_get_partition(), contentid + 7);
 
-    char dir[] = "ux0:pspemu/PSP/GAME";
-    pkgi_mkdirs(dir);
+    auto dir = fmt::format("{}pspemu/PSP/GAME",pkgi_get_partition());
+    pkgi_mkdirs(&dir[0]);
 
-    LOG("installing psx game at %s", path.c_str());
+    LOG("installing psx game at %s to %s", path.c_str(),dest.c_str());
     int res = sceIoRename(path.c_str(), dest.c_str());
     if (res < 0)
         throw std::runtime_error(fmt::format(
@@ -796,18 +831,19 @@ void pkgi_install_pspgame(const char* contentid)
 void pkgi_install_pspgame_as_iso(const char* contentid)
 {
     const auto path = fmt::format("{}/{}", pkgi_get_temp_folder(), contentid);
-    const auto dest = fmt::format("ux0:pspemu/PSP/GAME/{:.9}", contentid + 7);
+    const auto dest = fmt::format("{}pspemu/PSP/GAME/{:.9}",pkgi_get_partition(), contentid + 7);
 
     // this is actually a misnamed ISO file
     const auto eboot = fmt::format("{}/EBOOT.PBP", path);
     const auto content = fmt::format("{}/CONTENT.DAT", path);
     const auto pspkey = fmt::format("{}/PSP-KEY.EDAT", path);
-    const auto isodest = fmt::format("ux0:pspemu/ISO/{:.9}.iso", contentid + 7);
+    const auto isodest = fmt::format("{}pspemu/ISO/{:.9}.iso",pkgi_get_partition(), contentid + 7);
 
-    char dir[] = "ux0:pspemu/ISO";
-    pkgi_mkdirs(dir);
+    auto dir = fmt::format("{}pspemu/ISO",pkgi_get_partition());
+    pkgi_mkdirs(&dir[0]);
 
-    LOG("installing psp game at %s", eboot.c_str());
+
+    LOG("installing psp game at %s to %s", path.c_str(),dest.c_str());
     pkgi_rename(eboot.c_str(), isodest.c_str());
 
     const auto content_exists = pkgi_file_exists(content.c_str());
