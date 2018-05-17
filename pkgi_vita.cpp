@@ -649,8 +649,8 @@ uint64_t pkgi_get_free_space(const char* requested_partition)
     else
     {
         uint64_t free, max;
-        char* dev= "";
-		strcpy(dev,requested_partition);
+        char dev[16];
+        strncpy(dev, requested_partition, sizeof(dev));
         sceAppMgrGetDevInfo(dev, &max, &free);
         return free;
     }
@@ -814,8 +814,8 @@ void pkgi_install_pspgame(const char* contentid)
     const auto path = fmt::format("{}/{}", pkgi_get_temp_folder(), contentid);
     const auto dest = fmt::format("{}pspemu/PSP/GAME/{:.9}",pkgi_get_partition(), contentid + 7);
 
-    const auto dir = fmt::format("{}pspemu/PSP/GAME",pkgi_get_partition());
-    pkgi_mkdirs((char *)dir.c_str());
+    auto dir = fmt::format("{}pspemu/PSP/GAME",pkgi_get_partition());
+    pkgi_mkdirs(&dir[0]);
 
     LOG("installing psx game at %s to %s", path.c_str(),dest.c_str());
     int res = sceIoRename(path.c_str(), dest.c_str());
@@ -835,8 +835,8 @@ void pkgi_install_pspgame_as_iso(const char* contentid)
     const auto pspkey = fmt::format("{}/PSP-KEY.EDAT", path);
     const auto isodest = fmt::format("{}pspemu/ISO/{:.9}.iso",pkgi_get_partition(), contentid + 7);
 
-    const auto dir = fmt::format("{}pspemu/ISO",pkgi_get_partition());
-    pkgi_mkdirs((char *)dir.c_str());
+    auto dir = fmt::format("{}pspemu/ISO",pkgi_get_partition());
+    pkgi_mkdirs(&dir[0]);
 
 
     LOG("installing psp game at %s to %s", path.c_str(),dest.c_str());
