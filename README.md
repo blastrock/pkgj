@@ -34,6 +34,8 @@ Setup games databases URLs in `ux0:pkgi/config.txt`. The file format is the foll
     url_dlcs http://thesite/dlcs.tsv
     url_psx_games http://thesite/psxgames.tsv
     url_psp_games http://thesite/pspgames.tsv
+    
+**Attention:** when you copy the URLs from _thesite_, make sure you change `https` to `http` (just remove the `s`) on each line.
 
 Then start the application and you are ready to go.
 
