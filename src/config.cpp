@@ -167,6 +167,8 @@ Config pkgi_load_config()
                 config.updates_url = value;
             else if (pkgi_stricmp(key, "url_dlcs") == 0)
                 config.dlcs_url = value;
+            else if (pkgi_stricmp(key, "url_psm_games") == 0)
+                config.psm_games_url = value;
             else if (pkgi_stricmp(key, "url_psx_games") == 0)
                 config.psx_games_url = value;
             else if (pkgi_stricmp(key, "url_psp_games") == 0)
@@ -247,6 +249,12 @@ void pkgi_save_config(const Config& config)
                 sizeof(data) - len,
                 "url_dlcs %s\n",
                 config.dlcs_url.c_str());
+    if (!config.psm_games_url.empty())
+        len += pkgi_snprintf(
+                data + len,
+                sizeof(data) - len,
+                "url_psm_games %s\n",
+                config.psm_games_url.c_str());
     if (!config.psx_games_url.empty())
         len += pkgi_snprintf(
                 data + len,

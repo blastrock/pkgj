@@ -15,6 +15,7 @@ extern "C" {
 #include "http.hpp"
 
 #define PKGI_RIF_SIZE 512
+#define PKGI_PSM_RIF_SIZE 1024
 #define PKG_HEADER_SIZE 192
 #define PKG_HEADER_EXT_SIZE 64
 #define PKG_TAIL_SIZE 480
@@ -128,6 +129,8 @@ public:
     int create_stat();
     int check_integrity(const uint8_t* digest);
     int create_rif(const uint8_t* rif);
+    int create_psm_rif(const uint8_t* rif);
+    int adjust_psm_files(void);
 
     void serialize_state() const;
     void deserialize_state();

@@ -60,6 +60,7 @@ static const MenuEntry menu_entries[] = {
         {MenuShow, "Show DLCs", 4},
         {MenuShow, "Show PSX games", 8},
         {MenuShow, "Show PSP games", 16},
+        {MenuShow, "Show PSM games", 32},
 };
 
 int pkgi_menu_is_open(void)
@@ -213,6 +214,9 @@ int pkgi_do_menu(pkgi_input* input)
                 break;
             case 16:
                 menu_result = MenuResultShowPspGames;
+                break;
+            case 32:
+                menu_result = MenuResultShowPsmGames;
                 break;
             }
 

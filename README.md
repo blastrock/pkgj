@@ -15,10 +15,9 @@ This homebrew allows to download & unpack pkg file directly on Vita together wit
 Differences with PKGi:
 * **queues** multiple downloads.
 * **supports** the TSV file format.
-* **installs** game updates, DLCs, PSP and PSX games.
+* **installs** game updates, DLCs, PSM, PSP and PSX games.
 
 Current limitations:
-* **no support for PSM**.
 * **no background downloads** - if application is closed or Vita is put in sleep then download will stop.
 
 # Download
@@ -34,6 +33,7 @@ Setup games databases URLs in `ux0:pkgi/config.txt`. The file format is the foll
     url_dlcs http://thesite/dlcs.tsv
     url_psx_games http://thesite/psxgames.tsv
     url_psp_games http://thesite/pspgames.tsv
+    url_psm_games http://thesite/psmgames.tsv
     url_comppack http://thesite/comppack/
 
 **Attention:** The PS Vita has an imcomplete HTTPS support and most sites will not

@@ -677,6 +677,13 @@ int pkgi_dlc_is_installed(const char* content)
                     .c_str());
 }
 
+int pkgi_psm_is_installed(const char* titleid)
+{
+    return pkgi_file_exists(
+            fmt::format("ux0:psm/{}/RO/Application/app.exe", titleid)
+                    .c_str());
+}
+
 int pkgi_psp_is_installed(const char* psppartition, const char* content)
 {
     return pkgi_file_exists(
@@ -838,6 +845,22 @@ void pkgi_install_comppack(const char* titleid)
 
     LOGF("installing comp pack from {} to {}", src, dest);
     pkgi_extract_zip(src, dest);
+}
+
+void pkgi_install_psmgame(const char* contentid)
+{
+    char path[128];
+    snprintf(path, sizeof(path), "ux0:pkgi/%s", contentid);
+
+    const auto titleid = fmt::format("{:.9}", contentid + 7);
+    const auto src = fmt::format("ux0:pkgi/{}", contentid);
+    const auto dest = fmt::format("ux0:psm/{}", titleid);
+
+    LOGF("installing psm game from {} to {}", src, dest);
+    const auto res = sceIoRename(src.c_str(), dest.c_str());
+    if (res < 0)
+        throw formatEx<std::runtime_error>(
+                "failed to rename: {:#08x}", static_cast<uint32_t>(res));
 }
 
 void pkgi_install_pspgame(const char* partition, const char* contentid)

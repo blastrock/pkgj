@@ -76,6 +76,7 @@ typedef enum {
     ModeGames,
     ModeUpdates,
     ModeDlcs,
+    ModePsmGames,
     ModePsxGames,
     ModePspGames,
 } Mode;

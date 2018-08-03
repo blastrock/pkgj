@@ -24,6 +24,8 @@ enum ContentType
     CONTENT_TYPE_PSP_MINI_GAME = 15,
     CONTENT_TYPE_PSV_GAME = 21, // or update
     CONTENT_TYPE_PSV_DLC = 22,
+    CONTENT_TYPE_PSM_GAME = 24,
+    CONTENT_TYPE_PSM_GAME_ALT = 29, // also sometimes 29
 };
 
 // clang-format off
@@ -502,7 +504,8 @@ int Download::download_head(const uint8_t* rif)
         throw DownloadError("wrong pkg header");
     }
 
-    if (rif && !pkgi_memequ(rif + 0x10, head.data() + 0x30, 0x30))
+    // contentid is at 0x50 for psm games
+    if (rif && !(pkgi_memequ(rif + 0x10, head.data() + 0x30, 0x30) || pkgi_memequ(rif + 0x50, head.data() + 0x30, 0x30)) )
     {
         throw DownloadError("zRIF content id doesn't match pkg");
     }
@@ -579,6 +582,8 @@ int Download::download_head(const uint8_t* rif)
             if (content_type != CONTENT_TYPE_PSX_GAME &&
                 content_type != CONTENT_TYPE_PSP_GAME &&
                 content_type != CONTENT_TYPE_PSP_MINI_GAME &&
+                content_type != CONTENT_TYPE_PSM_GAME &&
+                content_type != CONTENT_TYPE_PSM_GAME_ALT &&
                 content_type != CONTENT_TYPE_PSV_GAME &&
                 content_type != CONTENT_TYPE_PSV_DLC)
             {
@@ -890,6 +895,12 @@ int Download::download_files(void)
                 continue;
             }
         }
+        else if (content_type == CONTENT_TYPE_PSM_GAME ||
+                 content_type == CONTENT_TYPE_PSM_GAME_ALT)
+        {
+            // skip "content/" prefix
+            item_path = fmt::format("{}/RO/{}", root, item_name.c_str() + 8);
+        }
         else
             item_path = fmt::format("{}/{}", root, item_name);
 
@@ -1038,6 +1049,58 @@ int Download::create_rif(const uint8_t* rif)
     return 1;
 }
 
+int Download::create_psm_rif(const uint8_t* rif)
+{
+    LOG("creating RO/License");
+    update_status("Creating RO/License");
+    const auto folder = fmt::format("{}/RO/License", root);
+    pkgi_mkdirs(folder.c_str());
+
+    LOG("creating work.bin");
+    update_status("Creating work.bin");
+
+    const auto path = fmt::format("{}/RO/License/FAKE.rif", root);
+
+    if (!pkgi_save(path.c_str(), rif, PKGI_PSM_RIF_SIZE))
+        throw formatEx<DownloadError>("cannot save rif to {}", path);
+
+    LOG("FAKE.rif created");
+    return 1;
+}
+
+int Download::adjust_psm_files(void)
+{
+    update_status("Creating additional psm files");
+    LOG("Removing sce_sys");
+    const auto sce_sys = fmt::format("{}/sce_sys", root);
+    pkgi_delete_dir(sce_sys);
+
+    const auto documents = fmt::format("{}/RW/Documents", root);
+    pkgi_mkdirs(documents.c_str());
+
+    LOG("creating RW/Temp");
+    const auto temp = fmt::format("{}/RW/Temp", root);
+    pkgi_mkdirs(temp.c_str());
+
+    LOG("creating RW/System");
+    const auto system = fmt::format("{}/RW/System", root);
+    pkgi_mkdirs(system.c_str());
+
+    LOG("creating RW/System/content_id");
+    uint8_t content_data[0x30] = { 0 };
+    memcpy(content_data, download_content, strlen(download_content));
+    const auto content_id = fmt::format("{}/RW/System/content_id", root);
+    if (!pkgi_save(content_id.c_str(), content_data, 0x30))
+        throw formatEx<DownloadError>("cannot save content_id to {}", content_id);
+
+    LOG("creating RW/System/pm.dat");
+    const auto pm_dat = fmt::format("{}/RW/System/pm.dat", root);
+    if (!pkgi_save(pm_dat.c_str(), calloc(1 << 16, 1), 1 << 16))
+        throw formatEx<DownloadError>("cannot save pm.dat to {}", pm_dat);
+
+    return 1;
+}
+
 int Download::pkgi_download(
         const char* partition,
         const char* content,
@@ -1079,19 +1142,35 @@ int Download::pkgi_download(
             return 0;
         if (content_type != CONTENT_TYPE_PSX_GAME &&
             content_type != CONTENT_TYPE_PSP_GAME &&
-            content_type != CONTENT_TYPE_PSP_MINI_GAME)
+            content_type != CONTENT_TYPE_PSP_MINI_GAME &&
+            content_type != CONTENT_TYPE_PSM_GAME &&
+            content_type != CONTENT_TYPE_PSM_GAME_ALT )
         {
             if (!create_stat())
                 return 0;
         }
         if (!check_integrity(digest))
             return 0;
-        if (rif)
+        if (content_type == CONTENT_TYPE_PSM_GAME ||
+            content_type == CONTENT_TYPE_PSM_GAME_ALT)
         {
-            if (!create_rif(rif))
+            if(!adjust_psm_files())
                 return 0;
         }
-
+        if (rif)
+        {
+            if (content_type == CONTENT_TYPE_PSM_GAME ||
+                content_type == CONTENT_TYPE_PSM_GAME_ALT)
+            {
+                if(!create_psm_rif(rif))
+                    return 0;
+            }
+            else
+            {
+                if (!create_rif(rif))
+                    return 0;
+            }
+        }
         return 1;
     }
     catch (const ResumeError& e)
