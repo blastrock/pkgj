@@ -1087,16 +1087,21 @@ int Download::adjust_psm_files(void)
     pkgi_mkdirs(system.c_str());
 
     LOG("creating RW/System/content_id");
-    uint8_t content_data[0x30] = { 0 };
-    memcpy(content_data, download_content, strlen(download_content));
+    char content_data[0x30];
+    strncpy(content_data, download_content, sizeof(content_data));
     const auto content_id = fmt::format("{}/RW/System/content_id", root);
     if (!pkgi_save(content_id.c_str(), content_data, 0x30))
         throw formatEx<DownloadError>("cannot save content_id to {}", content_id);
 
     LOG("creating RW/System/pm.dat");
     const auto pm_dat = fmt::format("{}/RW/System/pm.dat", root);
-    if (!pkgi_save(pm_dat.c_str(), calloc(1 << 16, 1), 1 << 16))
+    uint8_t *pm_data = (uint8_t *)calloc(1 << 16, 1);
+    if (!pkgi_save(pm_dat.c_str(), pm_data, 1 << 16))
+    {
+        free(pm_data);
         throw formatEx<DownloadError>("cannot save pm.dat to {}", pm_dat);
+    }
+    free(pm_data);
 
     return 1;
 }

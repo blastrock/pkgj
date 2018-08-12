@@ -680,7 +680,7 @@ int pkgi_dlc_is_installed(const char* content)
 int pkgi_psm_is_installed(const char* titleid)
 {
     return pkgi_file_exists(
-            fmt::format("ux0:psm/{}/RO/Application/app.exe", titleid)
+            fmt::format("ux0:psm/{}", titleid)
                     .c_str());
 }
 
@@ -849,9 +849,7 @@ void pkgi_install_comppack(const char* titleid)
 
 void pkgi_install_psmgame(const char* contentid)
 {
-    char path[128];
-    snprintf(path, sizeof(path), "ux0:pkgi/%s", contentid);
-
+    pkgi_mkdirs("ux0:psm");
     const auto titleid = fmt::format("{:.9}", contentid + 7);
     const auto src = fmt::format("ux0:pkgi/{}", contentid);
     const auto dest = fmt::format("ux0:psm/{}", titleid);

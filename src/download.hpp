@@ -130,7 +130,7 @@ public:
     int check_integrity(const uint8_t* digest);
     int create_rif(const uint8_t* rif);
     int create_psm_rif(const uint8_t* rif);
-    int adjust_psm_files(void);
+    int adjust_psm_files();
 
     void serialize_state() const;
     void deserialize_state();
