@@ -737,6 +737,7 @@ GameRegion pkgi_get_region(const std::string& titleid)
     case ID('N', 'P', 'H', 'G'):
     case ID('N', 'P', 'H', 'H'):
     case ID('N', 'P', 'H', 'Z'):
+    case ID('N', 'P', 'Q', 'A'):
     case ID('U', 'C', 'A', 'S'):
         return RegionASA;
 
@@ -748,6 +749,7 @@ GameRegion pkgi_get_region(const std::string& titleid)
     case ID('N', 'P', 'E', 'H'):
     case ID('N', 'P', 'E', 'X'):
     case ID('N', 'P', 'E', 'Z'):
+    case ID('N', 'P', 'O', 'A'):
     case ID('U', 'C', 'E', 'S'):
     case ID('U', 'L', 'E', 'S'):
         return RegionEUR;
@@ -762,6 +764,7 @@ GameRegion pkgi_get_region(const std::string& titleid)
     case ID('N', 'P', 'J', 'G'):
     case ID('N', 'P', 'J', 'H'):
     case ID('N', 'P', 'J', 'Q'):
+    case ID('N', 'P', 'P', 'A'):
         return RegionJPN;
 
     case ID('P', 'C', 'S', 'E'):
@@ -773,6 +776,7 @@ GameRegion pkgi_get_region(const std::string& titleid)
     case ID('N', 'P', 'U', 'H'):
     case ID('N', 'P', 'U', 'X'):
     case ID('N', 'P', 'U', 'Z'):
+    case ID('N', 'P', 'N', 'A'):
     case ID('U', 'C', 'U', 'S'):
     case ID('U', 'L', 'U', 'S'):
         return RegionUSA;
