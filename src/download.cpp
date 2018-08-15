@@ -505,7 +505,7 @@ int Download::download_head(const uint8_t* rif)
     }
 
     // contentid is at 0x50 for psm games
-    if (rif && !(pkgi_memequ(rif + 0x10, head.data() + 0x30, 0x30) || pkgi_memequ(rif + 0x50, head.data() + 0x30, 0x30)) )
+    if (rif && !(pkgi_memequ(rif + 0x10, head.data() + 0x30, 0x30) || pkgi_memequ(rif + 0x50, head.data() + 0x30, 0x30)))
     {
         throw DownloadError("zRIF content id doesn't match pkg");
     }
@@ -1159,7 +1159,7 @@ int Download::pkgi_download(
         if (content_type == CONTENT_TYPE_PSM_GAME ||
             content_type == CONTENT_TYPE_PSM_GAME_ALT)
         {
-            if(!adjust_psm_files())
+            if (!adjust_psm_files())
                 return 0;
         }
         if (rif)
@@ -1167,7 +1167,7 @@ int Download::pkgi_download(
             if (content_type == CONTENT_TYPE_PSM_GAME ||
                 content_type == CONTENT_TYPE_PSM_GAME_ALT)
             {
-                if(!create_psm_rif(rif))
+                if (!create_psm_rif(rif))
                     return 0;
             }
             else

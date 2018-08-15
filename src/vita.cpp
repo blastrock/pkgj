@@ -860,7 +860,10 @@ void pkgi_install_psmgame(const char* contentid, bool refresh_db)
         throw formatEx<std::runtime_error>(
                 "failed to rename: {:#08x}", static_cast<uint32_t>(res));
     if (refresh_db)
+    {
+        LOGF("removing id.dat")
         pkgi_rm("ux0:id.dat");
+    }
 }
 
 void pkgi_install_pspgame(const char* partition, const char* contentid)
