@@ -258,18 +258,18 @@ int pkgi_do_menu(pkgi_input* input)
         MenuType type = entry->type;
         if (type == MenuText)
         {
-            y += font_height;
+            y += font_height / 2;
         }
         else if (type == MenuSearchClear && !menu_search_clear)
         {
             continue;
         }
         else if (type == MenuRefresh)
-            y += font_height / 2;
+            y += font_height / 3;
         else if (type == MenuShow)
         {
             if (entry[-1].type != MenuShow)
-                y += font_height / 2;
+                y += font_height / 3;
             if (!(entry->value & menu_allow_refresh))
             {
                 continue;
