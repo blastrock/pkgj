@@ -106,7 +106,9 @@ Press left or right button to move page up or down.
   You need to install the [NoPsmDrm][] plugin and follow the setup instructions.
   After installing a PSM game, you'll need to refresh your livearea. You can do
   that by booting into the recovery menu and selecting `Rebuild Database`.
-  This will also remove your livearea layout.
+  This will also reset your livearea layout. To enable psm downloads and
+  prove that you read this readme, add "psm_disclaimer_yes_i_read_the_readme"
+  and the name of the needed plugin to the config file.
 
 8. The PSM Games don't work.
 
@@ -127,14 +129,9 @@ Press left or right button to move page up or down.
   If you press "Yes" here, your memory card will be **formatted**. Just press
   "No". In case you're using a Fat, SD2VITA or USB storage, there's no risk.
 
-10. There should be an easier way to remove this file!
+10. I'VE ADDED THE PSM URL TO THE CONFIG AND THERES NO MENU OPTION!!
 
-  You can automate the removal of the `id.dat` file by adding the following line
-  to your configuration file:
-
-    psm_trigger_refresh_and_maybe_format_by_removing [insert file name here]
-
-  Replace `[insert file name here]` with the file that needs to be removed.
+  Please read this Q&A carefully
 
 # Building
 

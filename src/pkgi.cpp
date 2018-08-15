@@ -677,7 +677,7 @@ static void pkgi_do_main(Downloader& downloader, pkgi_input* input)
                             !config.dlcs_url.empty() << 2 |
                             !config.psx_games_url.empty() << 3 |
                             !config.psp_games_url.empty() << 4 |
-                            !config.psm_games_url.empty() << 5;
+                            (!config.psm_games_url.empty() && config.psm_readme_disclaimer) << 5;
         pkgi_menu_start(search_active, &config, allow_refresh);
     }
 }

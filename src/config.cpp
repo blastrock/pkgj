@@ -187,6 +187,8 @@ Config pkgi_load_config()
                 config.install_psp_as_pbp = 1;
             else if (pkgi_stricmp(key, "install_psp_psx_location") == 0)
                 config.install_psp_psx_location = value;
+            else if (pkgi_stricmp(key, "psm_disclaimer_yes_i_read_the_readme") == 0)
+                config.psm_readme_disclaimer = (pkgi_stricmp(value, "NoPsmDrm") == 0);
         }
         return config;
     }
@@ -279,6 +281,11 @@ void pkgi_save_config(const Config& config)
                 sizeof(data) - len,
                 "install_psp_psx_location %s\n",
                 config.install_psp_psx_location.c_str());
+    if (config.psm_readme_disclaimer)
+        len += pkgi_snprintf(
+            data + len,
+            sizeof(data) - len,
+            "psm_disclaimer_yes_i_read_the_readme NoPsmDrm");
     len += pkgi_snprintf(
             data + len, sizeof(data) - len, "sort %s\n", sort_str(config.sort));
     len += pkgi_snprintf(
