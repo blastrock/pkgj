@@ -11,7 +11,6 @@ typedef struct Config
     uint32_t filter;
     int no_version_check;
     int install_psp_as_pbp;
-    bool psm_refresh_db;
     std::string install_psp_psx_location;
 
     std::string games_url;

@@ -101,7 +101,7 @@ int pkgi_psx_is_installed(const char* psppartition, const char* content);
 void pkgi_install(const char* titleid);
 void pkgi_install_update(const char* contentid);
 void pkgi_install_comppack(const char* titleid);
-void pkgi_install_psmgame(const char* contentid, bool refresh_db);
+void pkgi_install_psmgame(const char* contentid);
 void pkgi_install_pspgame(const char* partition, const char* contentid);
 void pkgi_install_pspgame_as_iso(const char* partition, const char* contentid);
 

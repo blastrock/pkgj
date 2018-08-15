@@ -176,7 +176,7 @@ void Downloader::do_download_package(const DownloadItem& item)
             pkgi_install_pspgame(item.partition.c_str(), item.content.c_str());
         break;
     case PsmGame:
-        pkgi_install_psmgame(item.content.c_str(), item.refresh_db);
+        pkgi_install_psmgame(item.content.c_str());
         break;
     case PsxGame:
         pkgi_install_pspgame(item.partition.c_str(), item.content.c_str());
