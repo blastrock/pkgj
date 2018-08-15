@@ -187,6 +187,7 @@ static void pkgi_start_download(Downloader& downloader)
                                   item->digest.begin(), item->digest.end())
                         : std::vector<uint8_t>{},
                 !config.install_psp_as_pbp,
+                config.psm_refresh_db,
                 pkgi_get_mode_partition()});
     }
     else

@@ -847,7 +847,7 @@ void pkgi_install_comppack(const char* titleid)
     pkgi_extract_zip(src, dest);
 }
 
-void pkgi_install_psmgame(const char* contentid)
+void pkgi_install_psmgame(const char* contentid, bool refresh_db)
 {
     pkgi_mkdirs("ux0:psm");
     const auto titleid = fmt::format("{:.9}", contentid + 7);
@@ -859,6 +859,8 @@ void pkgi_install_psmgame(const char* contentid)
     if (res < 0)
         throw formatEx<std::runtime_error>(
                 "failed to rename: {:#08x}", static_cast<uint32_t>(res));
+    if (refresh_db)
+        pkgi_rm("ux0:id.dat");
 }
 
 void pkgi_install_pspgame(const char* partition, const char* contentid)

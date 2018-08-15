@@ -29,6 +29,7 @@ struct DownloadItem
     std::vector<uint8_t> rif;
     std::vector<uint8_t> digest;
     bool save_as_iso;
+    bool refresh_db;
     std::string partition;
 };
 
