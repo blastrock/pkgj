@@ -285,7 +285,7 @@ void pkgi_save_config(const Config& config)
         len += pkgi_snprintf(
             data + len,
             sizeof(data) - len,
-            "psm_disclaimer_yes_i_read_the_readme NoPsmDrm");
+            "psm_disclaimer_yes_i_read_the_readme NoPsmDrm\n");
     len += pkgi_snprintf(
             data + len, sizeof(data) - len, "sort %s\n", sort_str(config.sort));
     len += pkgi_snprintf(
