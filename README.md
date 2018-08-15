@@ -101,33 +101,33 @@ Press left or right button to move page up or down.
 
   The default value is `ux0:`
 
-7. I want to play PSM Games
+7. I want to play PSM Games!
 
   You need to install the [NoPsmDrm][] plugin and follow the setup instructions.
   After installing a PSM game, you'll need to refresh your livearea. You can do
   that by booting into the recovery menu and selecting `Rebuild Database`.
-  You'll loose your livearea layout this way.
+  This will also remove your livearea layout.
 
-8. The PSM Games don't work
+8. The PSM Games don't work.
 
   If you followed the instructions for [NoPsmDrm][], you can try to activate
   your account for psm games using [NoPsmDrm
   Fixer][https://github.com/Yoti/psv_npdrmfix].
 
-9. I don't want to loose my livearea layout/There should be a better way, this
-   is too much effort
+9. I don't want to loose my livearea layout/This is too much effort, there
+   should be a better way.
 
   Warning: This method may **format** your memory card, if you're not careful.
 
   Well yes, there is. You can trigger a database refresh by removing `ux0:id.dat`
   and rebooting.
 
-  But: When using a Slim or a TV and an official memory card, you'll be asked if you `
-  want to transfer the data on the internal memory card to the removable memory card`.
+  But: When using a Slim or a PS TV and an official memory card, you'll be asked if you
+  "want to transfer the data on the internal memory card to the removable memory card".
   If you press "Yes" here, your memory card will be **formatted**. Just press
-  "No" here. If you're using a Fat, SD2VITA or USB storage, there's risk.
+  "No". In case you're using a Fat, SD2VITA or USB storage, there's no risk.
 
-10. There should be an easier way to remove this file
+10. There should be an easier way to remove this file!
 
   You can automate the removal of the `id.dat` file by adding the following line
   to your configuration file:
