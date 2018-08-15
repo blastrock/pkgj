@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.33
+
+What's new:
+
+- Added PSM support
+
 ## 0.32
 
 What's new:
