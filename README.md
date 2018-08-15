@@ -101,6 +101,41 @@ Press left or right button to move page up or down.
 
   The default value is `ux0:`
 
+7. I want to play PSM Games
+
+  You need to install the [NoPsmDrm][] plugin and follow the setup instructions.
+  After installing a PSM game, you'll need to refresh your livearea. You can do
+  that by booting into the recovery menu and selecting `Rebuild Database`.
+  You'll loose your livearea layout this way.
+
+8. The PSM Games don't work
+
+  If you followed the instructions for [NoPsmDrm][], you can try to activate
+  your account for psm games using [NoPsmDrm
+  Fixer][https://github.com/Yoti/psv_npdrmfix].
+
+9. I don't want to loose my livearea layout/There should be a better way, this
+   is too much effort
+
+  Warning: This method may **format** your memory card, if you're not careful.
+
+  Well yes, there is. You can trigger a database refresh by removing `ux0:id.dat`
+  and rebooting.
+
+  But: When using a Slim or a TV and an official memory card, you'll be asked if you `
+  want to transfer the data on the internal memory card to the removable memory card`.
+  If you press "Yes" here, your memory card will be **formatted**. Just press
+  "No" here. If you're using a Fat, SD2VITA or USB storage, there's risk.
+
+10. There should be an easier way to remove this file
+
+  You can automate the removal of the `id.dat` file by adding the following line
+  to your configuration file:
+
+    psm_trigger_refresh_and_maybe_format_by_removing [insert file name here]
+
+  Replace `[insert file name here]` with the file that needs to be removed.
+
 # Building
 
 pkgj uses conan and cmake to build. The setup is a bit tedious, so the
@@ -127,6 +162,7 @@ puff.h and puff.c files are under [zlib][] license.
 
 [NoNpDrm]: https://github.com/TheOfficialFloW/NoNpDrm/releases
 [npdrm_free]: https://github.com/kyleatlast/npdrm_free/releases
+[NoPsmDrm]: https://github.com/frangarcj/NoPsmDrm/
 [zrif_online_converter]: https://rawgit.com/mmozeiko/pkg2zip/online/zrif.html
 [pkg_dec]: https://github.com/weaknespase/PkgDecrypt
 [pkg_releases]: https://github.com/blastrock/pkgj/releases
