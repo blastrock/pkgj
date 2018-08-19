@@ -214,17 +214,17 @@ static uint32_t zlib_inflate(
 int pkgi_zrif_decode(
         const char* str, uint8_t* rif, char* error, uint32_t error_size)
 {
-    uint8_t raw[512];
+    uint8_t raw[1024];
     uint32_t len = base64_decode(str, raw);
 
-    uint8_t out[512 + sizeof(zrif_dict)];
+    uint8_t out[1024 + sizeof(zrif_dict)];
     len = zlib_inflate(raw, len, out, sizeof(out), error, error_size);
-    if (len != 512)
+    if (len != 512 && len != 1024)
     {
         strncpy(error, "wrong size of zRIF, is it corrupted?", error_size);
         return 0;
     }
 
-    memcpy(rif, out, 512);
+    memcpy(rif, out, 1024);
     return 1;
 }

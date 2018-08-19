@@ -29,7 +29,7 @@ int extract(int argc, char* argv[])
     std::vector<uint8_t> digest;
     boost::algorithm::unhex(std::string(argv[4]), std::back_inserter(digest));
 
-    uint8_t rif[PKGI_RIF_SIZE];
+    uint8_t rif[PKGI_PSM_RIF_SIZE];
     char message[256];
     if (argv[3][0] && !pkgi_zrif_decode(argv[3], rif, message, sizeof(message)))
         throw std::runtime_error(fmt::format("can't decode zrif: {}", message));

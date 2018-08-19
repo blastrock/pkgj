@@ -151,6 +151,8 @@ static std::string modeToDbName(Mode mode)
         return "pkgj_dlcs.db";
     case ModeUpdates:
         return "pkgj_updates.db";
+    case ModePsmGames:
+        return "pkgj_psmgames.db";
     case ModePspGames:
         return "pkgj_pspgames.db";
     case ModePsxGames:
@@ -166,7 +168,8 @@ static void pkgi_start_download(Downloader& downloader)
 
     LOG("decoding zRIF");
 
-    uint8_t rif[PKGI_RIF_SIZE];
+    // Just use the maximum size to be safe
+    uint8_t rif[PKGI_PSM_RIF_SIZE];
     char message[256];
     if (item->zrif.empty() ||
         pkgi_zrif_decode(item->zrif.c_str(), rif, message, sizeof(message)))
@@ -178,7 +181,7 @@ static void pkgi_start_download(Downloader& downloader)
                 item->url,
                 item->zrif.empty()
                         ? std::vector<uint8_t>{}
-                        : std::vector<uint8_t>(rif, rif + PKGI_RIF_SIZE),
+                        : std::vector<uint8_t>(rif, rif + PKGI_PSM_RIF_SIZE),
                 item->has_digest
                         ? std::vector<uint8_t>(
                                   item->digest.begin(), item->digest.end())
@@ -286,6 +289,8 @@ static std::string const& pkgi_get_url_from_mode(Mode mode)
         return config.updates_url;
     case ModeDlcs:
         return config.dlcs_url;
+    case ModePsmGames:
+        return config.psm_games_url;
     case ModePspGames:
         return config.psp_games_url;
     case ModePsxGames:
@@ -423,6 +428,12 @@ static void pkgi_do_main(Downloader& downloader, pkgi_input* input)
             {
             case ModeGames:
                 if (pkgi_is_installed(titleid))
+                    item->presence = PresenceInstalled;
+                else if (downloader.is_in_queue(item->content))
+                    item->presence = PresenceInstalling;
+                break;
+            case ModePsmGames:
+                if (pkgi_psm_is_installed(titleid))
                     item->presence = PresenceInstalled;
                 else if (downloader.is_in_queue(item->content))
                     item->presence = PresenceInstalling;
@@ -615,6 +626,7 @@ static void pkgi_do_main(Downloader& downloader, pkgi_input* input)
         switch (mode)
         {
         case ModeGames:
+        case ModePsmGames:
         case ModePsxGames:
         case ModePspGames:
             if (item->presence == PresenceInstalled)
@@ -664,7 +676,8 @@ static void pkgi_do_main(Downloader& downloader, pkgi_input* input)
                             !config.updates_url.empty() << 1 |
                             !config.dlcs_url.empty() << 2 |
                             !config.psx_games_url.empty() << 3 |
-                            !config.psp_games_url.empty() << 4;
+                            !config.psp_games_url.empty() << 4 |
+                            (!config.psm_games_url.empty() && config.psm_readme_disclaimer) << 5;
         pkgi_menu_start(search_active, &config, allow_refresh);
     }
 }
@@ -1162,6 +1175,9 @@ int main()
                         break;
                     case MenuResultShowDlcs:
                         pkgi_set_mode(ModeDlcs);
+                        break;
+                    case MenuResultShowPsmGames:
+                        pkgi_set_mode(ModePsmGames);
                         break;
                     case MenuResultShowPsxGames:
                         pkgi_set_mode(ModePsxGames);

@@ -60,6 +60,7 @@ static const MenuEntry menu_entries[] = {
         {MenuShow, "Show DLCs", 4},
         {MenuShow, "Show PSX games", 8},
         {MenuShow, "Show PSP games", 16},
+        {MenuShow, "Show PSM games", 32},
 };
 
 int pkgi_menu_is_open(void)
@@ -214,6 +215,9 @@ int pkgi_do_menu(pkgi_input* input)
             case 16:
                 menu_result = MenuResultShowPspGames;
                 break;
+            case 32:
+                menu_result = MenuResultShowPsmGames;
+                break;
             }
 
             menu_delta = -1;
@@ -254,18 +258,18 @@ int pkgi_do_menu(pkgi_input* input)
         MenuType type = entry->type;
         if (type == MenuText)
         {
-            y += font_height;
+            y += font_height / 2;
         }
         else if (type == MenuSearchClear && !menu_search_clear)
         {
             continue;
         }
         else if (type == MenuRefresh)
-            y += font_height / 2;
+            y += font_height / 3;
         else if (type == MenuShow)
         {
             if (entry[-1].type != MenuShow)
-                y += font_height / 2;
+                y += font_height / 3;
             if (!(entry->value & menu_allow_refresh))
             {
                 continue;

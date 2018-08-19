@@ -15,10 +15,9 @@ This homebrew allows to download & unpack pkg file directly on Vita together wit
 Differences with PKGi:
 * **queues** multiple downloads.
 * **supports** the TSV file format.
-* **installs** game updates, DLCs, PSP and PSX games.
+* **installs** game updates, DLCs, PSM, PSP and PSX games.
 
 Current limitations:
-* **no support for PSM**.
 * **no background downloads** - if application is closed or Vita is put in sleep then download will stop.
 
 # Download
@@ -34,6 +33,7 @@ Setup games databases URLs in `ux0:pkgi/config.txt`. The file format is the foll
     url_dlcs http://thesite/dlcs.tsv
     url_psx_games http://thesite/psxgames.tsv
     url_psp_games http://thesite/pspgames.tsv
+    url_psm_games http://thesite/psmgames.tsv
     url_comppack http://thesite/comppack/
 
 **Attention:** The PS Vita has an imcomplete HTTPS support and most sites will not
@@ -101,6 +101,38 @@ Press left or right button to move page up or down.
 
   The default value is `ux0:`
 
+7. I want to play PSM Games!
+
+  You need to install the [NoPsmDrm][] plugin and follow the setup instructions.
+  After installing a PSM game, you'll need to refresh your livearea. You can do
+  that by booting into the recovery menu and selecting `Rebuild Database`.
+  This will also reset your livearea layout. To enable psm downloads and
+  prove that you read this readme, add "psm_disclaimer_yes_i_read_the_readme"
+  and the name of the needed plugin to the config file.
+
+8. The PSM Games don't work.
+
+  If you followed the instructions for [NoPsmDrm][], you can try to activate
+  your account for psm games using [NoPsmDrm
+  Fixer][https://github.com/Yoti/psv_npdrmfix].
+
+9. I don't want to loose my livearea layout/This is too much effort, there
+   should be a better way.
+
+  Warning: This method may **format** your memory card, if you're not careful.
+
+  Well yes, there is. You can trigger a database refresh by removing `ux0:id.dat`
+  and rebooting.
+
+  But: When using a Slim or a PS TV and an official memory card, you'll be asked if you
+  "want to transfer the data on the internal memory card to the removable memory card".
+  If you press "Yes" here, your memory card will be **formatted**. Just press
+  "No". In case you're using a Fat, SD2VITA or USB storage, there's no risk.
+
+10. I'VE ADDED THE PSM URL TO THE CONFIG AND THERES NO MENU OPTION!!
+
+  Please read this Q&A carefully
+
 # Building
 
 pkgj uses conan and cmake to build. The setup is a bit tedious, so the
@@ -127,6 +159,7 @@ puff.h and puff.c files are under [zlib][] license.
 
 [NoNpDrm]: https://github.com/TheOfficialFloW/NoNpDrm/releases
 [npdrm_free]: https://github.com/kyleatlast/npdrm_free/releases
+[NoPsmDrm]: https://github.com/frangarcj/NoPsmDrm/
 [zrif_online_converter]: https://rawgit.com/mmozeiko/pkg2zip/online/zrif.html
 [pkg_dec]: https://github.com/weaknespase/PkgDecrypt
 [pkg_releases]: https://github.com/blastrock/pkgj/releases

@@ -28,6 +28,7 @@ std::string pkgi_mode_to_string(Mode mode)
         RET(Games, "Vita games");
         RET(Updates, "Vita updates");
         RET(Dlcs, "Vita DLCs");
+        RET(PsmGames, "PSM games");
         RET(PsxGames, "PSX games");
         RET(PspGames, "PSP games");
 #undef RET
@@ -217,6 +218,23 @@ int pkgi_get_column_number(Mode mode, Column column)
             throw std::runtime_error("invalid column");
         }
     case ModeDlcs:
+        switch (column)
+        {
+            MAP_COL(Region, 1);
+            MAP_COL(Name, 2);
+            MAP_COL(Url, 3);
+            MAP_COL(Zrif, 4);
+            MAP_COL(Content, 5);
+            MAP_COL(LastModification, 6);
+            MAP_COL(Size, 7);
+            MAP_COL(Digest, 8);
+            MAP_COL(NameOrg, -1);
+            MAP_COL(FwVersion, -1);
+            MAP_COL(AppVersion, -1);
+        default:
+            throw std::runtime_error("invalid column");
+        }
+    case ModePsmGames:
         switch (column)
         {
             MAP_COL(Region, 1);
@@ -719,6 +737,7 @@ GameRegion pkgi_get_region(const std::string& titleid)
     case ID('N', 'P', 'H', 'G'):
     case ID('N', 'P', 'H', 'H'):
     case ID('N', 'P', 'H', 'Z'):
+    case ID('N', 'P', 'Q', 'A'):
     case ID('U', 'C', 'A', 'S'):
         return RegionASA;
 
@@ -730,6 +749,7 @@ GameRegion pkgi_get_region(const std::string& titleid)
     case ID('N', 'P', 'E', 'H'):
     case ID('N', 'P', 'E', 'X'):
     case ID('N', 'P', 'E', 'Z'):
+    case ID('N', 'P', 'O', 'A'):
     case ID('U', 'C', 'E', 'S'):
     case ID('U', 'L', 'E', 'S'):
         return RegionEUR;
@@ -744,6 +764,7 @@ GameRegion pkgi_get_region(const std::string& titleid)
     case ID('N', 'P', 'J', 'G'):
     case ID('N', 'P', 'J', 'H'):
     case ID('N', 'P', 'J', 'Q'):
+    case ID('N', 'P', 'P', 'A'):
         return RegionJPN;
 
     case ID('P', 'C', 'S', 'E'):
@@ -755,6 +776,7 @@ GameRegion pkgi_get_region(const std::string& titleid)
     case ID('N', 'P', 'U', 'H'):
     case ID('N', 'P', 'U', 'X'):
     case ID('N', 'P', 'U', 'Z'):
+    case ID('N', 'P', 'N', 'A'):
     case ID('U', 'C', 'U', 'S'):
     case ID('U', 'L', 'U', 'S'):
         return RegionUSA;
