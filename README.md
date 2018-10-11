@@ -144,6 +144,18 @@ recommended way is to run ci/ci.sh. It will create a Python virtualenv with
 conan, setup the configuration for cross-compilation, register some recipes,
 and then run cmake and build pkgj for your vita and pkgj_cli for testing.
 
+Prerequisites:
+
+*  A working installation of VITASDK - full setup instructions can be found at https://vitasdk.org/.
+*  Debian packages (or their equivalents):
+  - build-essential
+  - git-core
+  - make
+  - cmake
+  - python3-pip
+  - pipenv (pip3 install --user pipenv)
+  - ninja-build
+
 pkgj will be built in ci/build, you can rebuild it anytime you want by running
 ninja in that same directory.
 
