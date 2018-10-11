@@ -8,7 +8,7 @@ cd ci
 
 ./setup_conan.sh
 
-export VITASDK=$(pipenv run conan info vitasdk-toolchain/06@blastrock/pkgj --paths -pr vita | grep -Po '(?<=package_folder: ).*$')
+export VITASDK=$(pipenv run conan info vitasdk-toolchain/07@blastrock/pkgj --paths -pr vita | grep -Po '(?<=package_folder: ).*$')
 export CC=gcc-7
 export CXX=g++-7
 
