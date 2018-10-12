@@ -476,7 +476,7 @@ void TitleDatabase::update(Mode mode, Http* http, const std::string& update_url)
 
     if (db_size == 0)
         throw std::runtime_error(
-                "list is empty... check for newer pkgi version");
+                "list is empty... check for newer pkgj version");
 
     LOG("parsing items");
 

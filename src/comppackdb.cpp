@@ -213,7 +213,7 @@ void CompPackDatabase::update(Http* http, const std::string& update_url)
 
     if (db_size == 0)
         throw std::runtime_error(
-                "comp pack list is empty... check for newer pkgi version");
+                "comp pack list is empty... check for newer pkgj version");
 
     LOG("parsing items");
 
