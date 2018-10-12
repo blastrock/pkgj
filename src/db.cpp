@@ -316,7 +316,9 @@ void TitleDatabase::parse_tsv_file(Mode mode, std::string& db_data)
             auto err = sqlite3_exec(
                     _sqliteDb.get(), "ROLLBACK", nullptr, nullptr, &errmsg);
             if (err != SQLITE_OK)
+            {
                 LOG("sqlite error: %s", errmsg);
+            }
         }
     };
 

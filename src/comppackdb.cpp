@@ -114,7 +114,9 @@ void CompPackDatabase::parse_entries(std::string& db_data)
             auto err = sqlite3_exec(
                     _sqliteDb.get(), "ROLLBACK", nullptr, nullptr, &errmsg);
             if (err != SQLITE_OK)
+            {
                 LOG("sqlite error: %s", errmsg);
+            }
         }
     };
 
@@ -211,7 +213,7 @@ void CompPackDatabase::update(Http* http, const std::string& update_url)
 
     if (db_size == 0)
         throw std::runtime_error(
-                "list is empty... check for newer pkgi version");
+                "comp pack list is empty... check for newer pkgi version");
 
     LOG("parsing items");
 
