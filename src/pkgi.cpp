@@ -313,10 +313,59 @@ void pkgi_friendly_size(char* text, uint32_t textlen, int64_t size)
     }
 }
 
+uint32_t pkgi_max_onscreen_items()
+{
+    return avail_height / (font_height + PKGI_MAIN_ROW_PADDING) -
+                        1;
+}
+
+void pkgi_recalc_first_and_selected_items()
+{
+    uint32_t db_count = db.get()->count();
+
+    if (db_count < 1)
+    {
+        // Empty database
+        first_item = 0;
+        selected_item = 0;
+        return;
+    }
+
+    // Get index of last item
+    uint32_t last_item = db_count - 1;
+
+    // Check if selected item is over last item
+    if (selected_item > last_item)
+    {
+        // Force selected item to last item
+        selected_item = last_item;
+    }
+
+    // Get max onscree items
+    uint32_t max_items = pkgi_max_onscreen_items();
+
+    if (selected_item < max_items)
+    {
+        // Selected item is on first screen
+        first_item = 0;
+    }
+    else if(selected_item > last_item - max_items)
+    {
+        // Selected item is on the last screen
+        first_item = last_item - max_items;
+    }
+    else
+    {
+        // Selected item is at the top of the screen
+        first_item = selected_item;
+    }
+}
+
 void pkgi_set_mode(Mode set_mode)
 {
     mode = set_mode;
     pkgi_reload();
+    pkgi_recalc_first_and_selected_items();
 }
 
 void pkgi_refresh_list()
@@ -353,9 +402,7 @@ void pkgi_do_main(Downloader& downloader, pkgi_input* input)
             else if (selected_item == 0)
             {
                 selected_item = db_count - 1;
-                uint32_t max_items =
-                        avail_height / (font_height + PKGI_MAIN_ROW_PADDING) -
-                        1;
+                uint32_t max_items = pkgi_max_onscreen_items();
                 first_item =
                         db_count > max_items ? db_count - max_items - 1 : 0;
             }
@@ -363,8 +410,7 @@ void pkgi_do_main(Downloader& downloader, pkgi_input* input)
 
         if (input->active & PKGI_BUTTON_DOWN)
         {
-            uint32_t max_items =
-                    avail_height / (font_height + PKGI_MAIN_ROW_PADDING) - 1;
+            uint32_t max_items = pkgi_max_onscreen_items();
             if (selected_item == db_count - 1)
             {
                 selected_item = first_item = 0;
@@ -382,8 +428,7 @@ void pkgi_do_main(Downloader& downloader, pkgi_input* input)
 
         if (input->active & PKGI_BUTTON_LEFT)
         {
-            uint32_t max_items =
-                    avail_height / (font_height + PKGI_MAIN_ROW_PADDING) - 1;
+            uint32_t max_items = pkgi_max_onscreen_items();
             if (first_item < max_items)
             {
                 first_item = 0;
@@ -404,8 +449,7 @@ void pkgi_do_main(Downloader& downloader, pkgi_input* input)
 
         if (input->active & PKGI_BUTTON_RIGHT)
         {
-            uint32_t max_items =
-                    avail_height / (font_height + PKGI_MAIN_ROW_PADDING) - 1;
+            uint32_t max_items = pkgi_max_onscreen_items();
             if (first_item + max_items < db_count - 1)
             {
                 first_item += max_items;
