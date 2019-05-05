@@ -224,9 +224,9 @@ void GameView::printDiagnostic()
 
     if (_comppack_versions.base.empty() && !_comppack_versions.patch.empty())
         printError(
-                "- You have installed an update compitibility pack without "
+                "- You have installed an update compatibility pack without "
                 "installing the base pack, install the base pack first and "
-                "reinstall the update compitibility pack.");
+                "reinstall the update compatibility pack.");
 
     std::string comppack_version;
     if (!_comppack_versions.patch.empty())
@@ -239,7 +239,7 @@ void GameView::printDiagnostic()
         printError(
                 "- The version of the game does not match the installed "
                 "compatibility pack. If you have updated the game, also "
-                "install the update compitibility pack.");
+                "install the update compatibility pack.");
 
     if (_item->presence == PresenceInstalled &&
         comppack_version > _game_version)
