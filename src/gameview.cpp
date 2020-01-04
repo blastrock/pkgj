@@ -28,6 +28,7 @@ GameView::GameView(
     , _base_comppack(base_comppack)
     , _patch_comppack(patch_comppack)
     , _patch_info_fetcher(item->titleid)
+    , _image_fetcher(item)
 {
     refresh();
 }
@@ -167,6 +168,16 @@ void GameView::render()
         }
     }
 
+    // Display game image
+    if (_image_fetcher.get_status() == ImageFetcher::Status::Found)
+    {
+        auto tex = _image_fetcher.get_texture();
+        int tex_w = vita2d_texture_get_width(tex);
+        int tex_h = vita2d_texture_get_height(tex);
+        ImGui::SetCursorPos(ImVec2(GameViewWidth - tex_w - 30, 60));
+        ImGui::Image(tex, ImVec2(tex_w, tex_h));
+    }
+
     ImGui::End();
 }
 
@@ -207,8 +218,8 @@ void GameView::printDiagnostic()
     else
     {
         ImGui::Text(
-                "- Your firmware is recent enough, no need for compatibility "
-                "packs");
+                "- Your firmware is recent enough, no need for\n"
+                "compatibility packs");
     }
 
     if (_comppack_versions.present && _comppack_versions.base.empty() &&

@@ -17,7 +17,7 @@ class VitasdkToolchainConan(ConanFile):
 
         tools.patch(base_path="vitasdk", patch_file="cmake-toolchain.patch", strip=1)
 
-        additional_libs = ["libvita2d", "libpng", "zlib"]
+        additional_libs = ["libvita2d", "libpng", "libjpeg-turbo", "zlib"]
         for lib in additional_libs:
             lib = "{}.tar.xz".format(lib)
             tools.download("http://dl.vitasdk.org/{}".format(lib), filename=lib)

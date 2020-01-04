@@ -6,6 +6,7 @@
 #include "downloader.hpp"
 #include "install.hpp"
 #include "patchinfofetcher.hpp"
+#include "imagefetcher.hpp"
 
 #include <optional>
 
@@ -53,6 +54,7 @@ private:
     bool _closed{false};
 
     PatchInfoFetcher _patch_info_fetcher;
+    ImageFetcher _image_fetcher;
 
     std::string get_min_system_version();
     void printDiagnostic();

@@ -55,6 +55,7 @@ add_executable(pkgj
   src/gameview.cpp
   src/patchinfo.cpp
   src/patchinfofetcher.cpp
+  src/imagefetcher.cpp
   src/imgui.cpp
   src/install.cpp
   src/menu.cpp
@@ -79,6 +80,7 @@ target_link_libraries(pkgj
   CONAN_PKG::imgui
   CONAN_PKG::taihen
   png
+  jpeg
   z
   m
   SceAppMgr_stub
