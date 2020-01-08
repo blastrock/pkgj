@@ -51,7 +51,8 @@ void GameView::render()
                     ImGuiWindowFlags_NoSavedSettings |
                     ImGuiWindowFlags_NoInputs);
 
-    ImGui::PushTextWrapPos(0.f);
+    ImGui::PushTextWrapPos(_image_fetcher.get_status() == ImageFetcher::Status::Found ?
+        GameViewWidth - 300.f : 0.f);
     ImGui::Text(fmt::format("Firmware version: {}", pkgi_get_system_version())
                         .c_str());
     ImGui::Text(
@@ -70,7 +71,7 @@ void GameView::render()
     {
         ImGui::Text("Installed compatibility pack: unknown version");
     }
-    else
+    else if (!_refood_present && !_0syscall6_present)
     {
         ImGui::Text(fmt::format(
                             "Installed base compatibility pack: {}",
@@ -174,7 +175,7 @@ void GameView::render()
         auto tex = _image_fetcher.get_texture();
         int tex_w = vita2d_texture_get_width(tex);
         int tex_h = vita2d_texture_get_height(tex);
-        ImGui::SetCursorPos(ImVec2(GameViewWidth - tex_w - 30, 60));
+        ImGui::SetCursorPos(ImVec2(GameViewWidth - tex_w - 30, 30));
         ImGui::Image(tex, ImVec2(tex_w, tex_h));
     }
 
@@ -218,8 +219,8 @@ void GameView::printDiagnostic()
     else
     {
         ImGui::Text(
-                "- Your firmware is recent enough, no need for\n"
-                "compatibility packs");
+                "- Your firmware is recent enough, no need for compatibility "
+                "packs");
     }
 
     if (_comppack_versions.present && _comppack_versions.base.empty() &&
