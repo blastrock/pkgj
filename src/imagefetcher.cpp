@@ -123,7 +123,7 @@ void ImageFetcher::do_request()
         const auto image = download_data(_http.get(), _url);
         {
             std::lock_guard<Mutex> lock(_mutex);
-            if (image && !image->empty()) 
+            if (image && !image->empty())
                 _texture = vita2d_load_JPEG_buffer(image->data(), image->size());
             _http = nullptr;
         }
