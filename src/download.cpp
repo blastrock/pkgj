@@ -25,6 +25,7 @@ enum ContentType
     CONTENT_TYPE_PSP_GAME = 7,
     CONTENT_TYPE_PSP_GAME_ALT = 14,
     CONTENT_TYPE_PSP_MINI_GAME = 15,
+    CONTENT_TYPE_PSP_NEOGEO_GAME = 16,
     CONTENT_TYPE_PSV_GAME = 21, // or update
     CONTENT_TYPE_PSV_DLC = 22,
     CONTENT_TYPE_PSM_GAME = 24,
@@ -598,6 +599,7 @@ int Download::download_head(const uint8_t* rif)
                 content_type != CONTENT_TYPE_PSP_GAME &&
                 content_type != CONTENT_TYPE_PSP_GAME_ALT &&
                 content_type != CONTENT_TYPE_PSP_MINI_GAME &&
+                content_type != CONTENT_TYPE_PSP_NEOGEO_GAME &&
                 content_type != CONTENT_TYPE_PSM_GAME &&
                 content_type != CONTENT_TYPE_PSM_GAME_ALT &&
                 content_type != CONTENT_TYPE_PSV_GAME &&
@@ -926,7 +928,8 @@ int Download::download_files(void)
         if (content_type == CONTENT_TYPE_PSX_GAME ||
             content_type == CONTENT_TYPE_PSP_GAME ||
             content_type == CONTENT_TYPE_PSP_GAME_ALT ||
-            content_type == CONTENT_TYPE_PSP_MINI_GAME)
+            content_type == CONTENT_TYPE_PSP_MINI_GAME ||
+            content_type == CONTENT_TYPE_PSP_NEOGEO_GAME)
         {
             const std::string prefix = "USRDIR/CONTENT";
             if (item_name.substr(0, prefix.size()) == prefix)
@@ -996,7 +999,8 @@ int Download::download_files(void)
 
         if (content_type == CONTENT_TYPE_PSP_GAME ||
             content_type == CONTENT_TYPE_PSP_GAME_ALT ||
-            content_type == CONTENT_TYPE_PSP_MINI_GAME)
+            content_type == CONTENT_TYPE_PSP_MINI_GAME ||
+            content_type == CONTENT_TYPE_PSP_NEOGEO_GAME)
         {
             if (save_as_iso)
             {
@@ -1214,6 +1218,7 @@ int Download::pkgi_download(
             content_type != CONTENT_TYPE_PSP_GAME &&
             content_type != CONTENT_TYPE_PSP_GAME_ALT &&
             content_type != CONTENT_TYPE_PSP_MINI_GAME &&
+            content_type != CONTENT_TYPE_PSP_NEOGEO_GAME &&
             content_type != CONTENT_TYPE_PSM_GAME &&
             content_type != CONTENT_TYPE_PSM_GAME_ALT)
         {
@@ -1244,7 +1249,8 @@ int Download::pkgi_download(
         }
         if (content_type == CONTENT_TYPE_PSP_GAME ||
             content_type == CONTENT_TYPE_PSP_GAME_ALT ||
-            content_type == CONTENT_TYPE_PSP_MINI_GAME)
+            content_type == CONTENT_TYPE_PSP_MINI_GAME ||
+            content_type == CONTENT_TYPE_PSP_NEOGEO_GAME)
         {
             // we can leave them, but they're useless and they conflict when
             // installing DLCs
