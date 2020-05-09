@@ -69,7 +69,7 @@ int refreshlist(int argc, char* argv[])
 
     const auto db = std::make_unique<TitleDatabase>(".");
     db->update(mode, http.get(), argv[3]);
-    db->reload(mode, DbFilterAllRegions, SortBySize, SortDescending, "the", {});
+    db->reload(mode, DbFilterAllRegions, SortBySize, SortDescending, "", "the", {});
     for (unsigned int i = 0; i < db->count(); ++i)
         fmt::print("{}: {}\n", db->get(i)->name, db->get(i)->size);
     fmt::print("{}/{}\n", db->count(), db->total());

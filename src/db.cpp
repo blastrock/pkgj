@@ -387,6 +387,7 @@ void TitleDatabase::reload(
         uint32_t region_filter,
         DbSort sort_by,
         DbSortOrder sort_order,
+        const std::string& partition,
         const std::string& search,
         const std::set<std::string>& installed_games)
 {
@@ -474,6 +475,7 @@ void TitleDatabase::reload(
                 installed_games.find(titleid) != installed_games.end())
                 db.push_back(DbItem{
                         PresenceUnknown,
+                        partition,
                         titleid,
                         content,
                         0,

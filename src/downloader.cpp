@@ -172,26 +172,26 @@ void Downloader::do_download_package(const DownloadItem& item)
     {
     case Game:
     case Dlc:
-        pkgi_install(item.content.c_str());
+        pkgi_install(item.partition.c_str(), item.content.c_str());
         break;
     case Patch:
-        pkgi_install_update(item.content.c_str());
+        pkgi_install_update(item.partition.c_str(), item.content.c_str());
         break;
     case PspGame:
         if (item.save_as_iso)
             pkgi_install_pspgame_as_iso(
-                    item.partition.c_str(), item.content.c_str());
+                    item.partition.c_str(), item.game_path.c_str(), item.iso_path.c_str(), item.content.c_str());
         else
-            pkgi_install_pspgame(item.partition.c_str(), item.content.c_str());
+            pkgi_install_pspgame(item.partition.c_str(), item.game_path.c_str(), item.content.c_str());
         break;
     case PspDlc:
-        pkgi_install_pspdlc(item.partition.c_str(), item.content.c_str());
+        pkgi_install_pspdlc(item.partition.c_str(), item.game_path.c_str(), item.content.c_str());
         break;
     case PsmGame:
-        pkgi_install_psmgame(item.content.c_str());
+        pkgi_install_psmgame(item.partition.c_str(), item.content.c_str());
         break;
     case PsxGame:
-        pkgi_install_pspgame(item.partition.c_str(), item.content.c_str());
+        pkgi_install_pspgame(item.partition.c_str(), item.psx_path.c_str(), item.content.c_str());
         break;
     case CompPackBase:
     case CompPackPatch:
@@ -227,7 +227,7 @@ void Downloader::do_download_comppack(const DownloadItem& item)
             item.partition.c_str(), item.content.c_str(), item.url.c_str());
     LOGF("download of comppack {} completed!", item.url);
     pkgi_install_comppack(
-            item.content, item.type == CompPackPatch, item.version);
+            item.partition, item.content, item.type == CompPackPatch, item.version);
     pkgi_rm(fmt::format("{}pkgj/{}-comp.ppk", item.partition, item.content)
                     .c_str());
     LOG("install of %s completed!", item.name.c_str());

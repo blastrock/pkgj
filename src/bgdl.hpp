@@ -13,6 +13,7 @@ enum BgdlType
 
 void pkgi_start_bgdl(
         const int type,
+        const std::string& partition,
         const std::string& title,
         const std::string& url,
         const std::vector<uint8_t>& rif);

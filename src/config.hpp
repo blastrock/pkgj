@@ -11,7 +11,11 @@ typedef struct Config
     uint32_t filter;
     int no_version_check;
     int install_psp_as_pbp;
+    std::string install_psv_location;
     std::string install_psp_psx_location;
+    std::string install_psp_game_path;
+    std::string install_psp_iso_path;
+    std::string install_psp_psx_path;
 
     std::string games_url;
     std::string dlcs_url;

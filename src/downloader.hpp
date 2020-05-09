@@ -32,6 +32,9 @@ struct DownloadItem
     std::vector<uint8_t> digest;
     bool save_as_iso;
     std::string partition;
+    std::string game_path;
+    std::string iso_path;
+    std::string psx_path;
     // only used by compatibility packs
     std::string version;
 };

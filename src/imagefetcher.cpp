@@ -56,12 +56,13 @@ std::string get_image_url(DbItem* item)
 
 ImageFetcher::ImageFetcher(DbItem* item)
     : _mutex("image_fetcher_mutex")
-    , _path(fmt::format("ux0:pkgj/cover/{}.jpg", item->titleid))
+    , _path(fmt::format("{}pkgj/cover/{}.jpg", item->partition, item->titleid))
     , _url(get_image_url(item))
     , _texture(nullptr)
     , _thread("image_fetcher", [this] { do_request(); })
 {
-    pkgi_mkdirs("ux0:pkgj/cover");
+    auto path = fmt::format("{}pkgj/cover", item->partition);
+    pkgi_mkdirs(path.c_str());
 }
 
 ImageFetcher::~ImageFetcher()

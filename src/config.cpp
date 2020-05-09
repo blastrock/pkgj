@@ -46,6 +46,8 @@ static constexpr char default_psm_games_url[] = {
         0x6d, 0x2f, 0x74, 0x73, 0x76, 0x2f, 0x50, 0x53, 0x4d, 0x5f, 0x47,
         0x41, 0x4d, 0x45, 0x53, 0x2e, 0x74, 0x73, 0x76, 0x00};
 static constexpr char default_comppack_url[] = {0};
+static constexpr char default_install_psp_game_path[] = "pspemu/PSP/GAME";
+static constexpr char default_install_psp_iso_path[] =  "pspemu/ISO";
 
 static char* skipnonws(char* text, char* end)
 {
@@ -174,7 +176,11 @@ Config pkgi_load_config()
         config.sort = SortByName;
         config.order = SortAscending;
         config.filter = DbFilterAll;
-        config.install_psp_psx_location = "ux0:";
+        config.install_psv_location = "ux0:";
+        config.install_psp_psx_location = config.install_psv_location;
+        config.install_psp_game_path = default_install_psp_game_path;
+        config.install_psp_iso_path = default_install_psp_iso_path;
+        config.install_psp_psx_path = default_install_psp_game_path;
 
         auto const path =
                 fmt::format("{}/config.txt", pkgi_get_config_folder());
@@ -245,6 +251,12 @@ Config pkgi_load_config()
                 config.install_psp_as_pbp = 1;
             else if (pkgi_stricmp(key, "install_psp_psx_location") == 0)
                 config.install_psp_psx_location = value;
+            else if (pkgi_stricmp(key, "install_psp_game_path") == 0)
+                config.install_psp_game_path = value;
+            else if (pkgi_stricmp(key, "install_psp_iso_path") == 0)
+                config.install_psp_iso_path = value;
+            else if (pkgi_stricmp(key, "install_psp_psx_path") == 0)
+                config.install_psp_psx_path = value;
         }
         return config;
     }
@@ -305,13 +317,16 @@ void pkgi_save_config(const Config& config)
     SAVE_CONF("url_psp_games", psp_games_url, default_psp_games_url)
     SAVE_CONF("url_psp_dlcs", psp_dlcs_url, default_psp_dlcs_url)
     SAVE_CONF("url_comppack", comppack_url, default_comppack_url)
-#undef SAVE_CONF
     if (!config.install_psp_psx_location.empty())
         len += pkgi_snprintf(
                 data + len,
                 sizeof(data) - len,
                 "install_psp_psx_location %s\n",
                 config.install_psp_psx_location.c_str());
+    SAVE_CONF("install_psp_game_path", install_psp_game_path, default_install_psp_game_path);
+    SAVE_CONF("install_psp_iso_path", install_psp_iso_path, default_install_psp_iso_path);
+    SAVE_CONF("install_psp_psx_path", install_psp_psx_path, default_install_psp_game_path);
+#undef SAVE_CONF
     len += pkgi_snprintf(
             data + len, sizeof(data) - len, "sort %s\n", sort_str(config.sort));
     len += pkgi_snprintf(

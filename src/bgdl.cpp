@@ -6,6 +6,8 @@
 #include <taihen.h>
 #include <vitasdk.h>
 
+#include <fmt/format.h>
+
 #include <cstdlib>
 #include <cstring>
 #include <stdexcept>
@@ -196,6 +198,7 @@ void init_download_class(scedownload_class* sceDownloadObj)
 
 void scedownload_start_with_rif(
         scedownload_class* sceDownloadObj,
+        const char* partition,
         const char* title,
         const char* url,
         const char* rif,
@@ -226,10 +229,11 @@ void scedownload_start_with_rif(
     params.result = &result;
     params.shell_func_8 = (*(sceDownloadObj->class_header->func_table))[8];
 
+    auto icon_path = fmt::format("{}bgdl/icon0.png", partition);
     strcpy((char*)params.init.addr_DC0->url, url);
     strcpy((char*)params.init.addr_DC0->license_path, rif);
     strcpy((char*)params.init.addr_DC0->title, title);
-    strcpy((char*)params.init.addr_DC0->icon_path, "ux0:bgdl/icon0.png");
+    strcpy((char*)params.init.addr_DC0->icon_path, icon_path.c_str());
 
     params.init.addr_DC0->type[0] = params.init.addr_DC0->type[1] = type;
 
@@ -304,11 +308,12 @@ std::unique_ptr<scedownload_class> new_scedownload()
 
 void pkgi_start_bgdl(
         const int type,
+        const std::string& partition,
         const std::string& title,
         const std::string& url,
         const std::vector<uint8_t>& rif)
 {
-    if (pkgi_list_dir_contents("ux0:bgdl/t").size() >= 32)
+    if (pkgi_list_dir_contents(fmt::format("{}bgdl/t", partition)).size() >= 32)
         throw std::runtime_error(
                 "There are too many pending installation on your device, "
                 "install them from LiveArea's notifications or delete them to "
@@ -316,11 +321,12 @@ void pkgi_start_bgdl(
 
     static auto example_class = new_scedownload();
 
-    const std::string license_path = "ux0:bgdl/temp.dat";
+    const std::string license_path = fmt::format("{}bgdl/temp.dat", partition);
     pkgi_save(license_path, rif.data(), rif.size());
 
     scedownload_start_with_rif(
             example_class.get(),
+            partition.c_str(),
             title.c_str(),
             url.c_str(),
             license_path.c_str(),

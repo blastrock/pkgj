@@ -140,6 +140,7 @@ void configure_db(TitleDatabase* db, const char* search, const Config* config)
                         : config->filter & ~DbFilterInstalled,
                 config->sort,
                 config->order,
+                config->install_psv_location,
                 search ? search : "",
                 installed_games);
     }
@@ -253,18 +254,18 @@ const char* pkgi_get_mode_partition()
         || mode == ModePspDlcs
         || mode == ModePsxGames
     ? config.install_psp_psx_location.c_str()
-    : "ux0:";
+    : config.install_psv_location.c_str();
 }
 
 void pkgi_refresh_installed_packages()
 {
-    auto games = pkgi_get_installed_games();
+    auto games = pkgi_get_installed_games(config.install_psv_location);
     installed_games.clear();
     installed_games.insert(
             std::make_move_iterator(games.begin()),
             std::make_move_iterator(games.end()));
 
-    auto themes = pkgi_get_installed_themes();
+    auto themes = pkgi_get_installed_themes(config.install_psv_location);
     installed_themes.clear();
     installed_themes.insert(
             std::make_move_iterator(themes.begin()),
@@ -457,28 +458,28 @@ void pkgi_do_main(Downloader& downloader, pkgi_input* input)
                     item->presence = PresenceInstalling;
                 break;
             case ModePsmGames:
-                if (pkgi_psm_is_installed(titleid))
+                if (pkgi_psm_is_installed(pkgi_get_mode_partition(), titleid))
                     item->presence = PresenceInstalled;
                 else if (downloader.is_in_queue(PsmGame, item->content))
                     item->presence = PresenceInstalling;
                 break;
             case ModePspDlcs:
                 if (pkgi_psp_is_installed(
-                            pkgi_get_mode_partition(), item->content.c_str()))
+                            pkgi_get_mode_partition(), config.install_psp_game_path.c_str(), config.install_psp_iso_path.c_str(), item->content.c_str()))
                     item->presence = PresenceGamePresent;
                 else if (downloader.is_in_queue(PspGame, item->content))
                     item->presence = PresenceInstalling;
                 break;
             case ModePspGames:
                 if (pkgi_psp_is_installed(
-                            pkgi_get_mode_partition(), item->content.c_str()))
+                            pkgi_get_mode_partition(), config.install_psp_game_path.c_str(), config.install_psp_iso_path.c_str(), item->content.c_str()))
                     item->presence = PresenceInstalled;
                 else if (downloader.is_in_queue(PspGame, item->content))
                     item->presence = PresenceInstalling;
                 break;
             case ModePsxGames:
                 if (pkgi_psx_is_installed(
-                            pkgi_get_mode_partition(), item->content.c_str()))
+                            pkgi_get_mode_partition(), config.install_psp_psx_path.c_str(), item->content.c_str()))
                     item->presence = PresenceInstalled;
                 else if (downloader.is_in_queue(PsxGame, item->content))
                     item->presence = PresenceInstalling;
@@ -486,7 +487,7 @@ void pkgi_do_main(Downloader& downloader, pkgi_input* input)
             case ModeDlcs:
                 if (downloader.is_in_queue(Dlc, item->content))
                     item->presence = PresenceInstalling;
-                else if (pkgi_dlc_is_installed(item->content.c_str()))
+                else if (pkgi_dlc_is_installed(item->partition.c_str(), item->content.c_str()))
                     item->presence = PresenceInstalled;
                 else if (pkgi_is_installed(titleid))
                     item->presence = PresenceGamePresent;
@@ -865,20 +866,11 @@ void pkgi_do_tail(Downloader& downloader)
     }
     pkgi_draw_text(0, second_line, PKGI_COLOR_TEXT_TAIL, text);
 
-    // get free space of partition only if looking at psx or psp games else show
-    // ux0:
     char size[64];
-    if (mode == ModePsxGames || mode == ModePspGames)
-    {
-        pkgi_friendly_size(
+    pkgi_friendly_size(
                 size,
                 sizeof(size),
                 pkgi_get_free_space(pkgi_get_mode_partition()));
-    }
-    else
-    {
-        pkgi_friendly_size(size, sizeof(size), pkgi_get_free_space("ux0:"));
-    }
 
     char free[64];
     pkgi_snprintf(free, sizeof(free), "Free: %s", size);
@@ -1025,6 +1017,7 @@ void pkgi_start_download(Downloader& downloader, const DbItem& item)
             {
                 pkgi_start_bgdl(
                         mode_to_bgdl_type(mode),
+                        item.partition,
                         item.name,
                         item.url,
                         item.zrif.empty()
@@ -1053,6 +1046,9 @@ void pkgi_start_download(Downloader& downloader, const DbItem& item)
                                         : std::vector<uint8_t>{},
                         !config.install_psp_as_pbp,
                         pkgi_get_mode_partition(),
+                        config.install_psp_game_path,
+                        config.install_psp_iso_path,
+                        config.install_psp_psx_path,
                         ""});
         }
         else

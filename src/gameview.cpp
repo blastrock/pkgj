@@ -253,8 +253,8 @@ void GameView::refresh()
     LOGF("refreshing gameview");
     _refood_present = pkgi_is_module_present("ref00d");
     _0syscall6_present = pkgi_is_module_present("0syscall6");
-    _game_version = pkgi_get_game_version(_item->titleid);
-    _comppack_versions = pkgi_get_comppack_versions(_item->titleid);
+    _game_version = pkgi_get_game_version(_item->partition, _item->titleid);
+    _comppack_versions = pkgi_get_comppack_versions(_item->partition, _item->titleid);
 }
 
 void GameView::start_download_package()
@@ -288,7 +288,10 @@ void GameView::start_download_comppack(bool patch)
                                   std::vector<uint8_t>{},
                                   std::vector<uint8_t>{},
                                   false,
-                                  "ux0:",
+                                  _config->install_psv_location,
+                                  _config->install_psp_game_path,
+                                  _config->install_psp_iso_path,
+                                  _config->install_psp_psx_path,
                                   entry->app_version});
 }
 
