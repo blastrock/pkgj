@@ -453,7 +453,8 @@ void TitleDatabase::reload(
                 continue;
 
             if (!search.empty() &&
-                !pkgi_stricontains(name.c_str(), search.c_str()))
+                !pkgi_stricontains(name.c_str(), search.c_str()) &&
+                !pkgi_stricontains(titleid.c_str(), search.c_str()))
                 continue;
 
             bool bdigest = true;
