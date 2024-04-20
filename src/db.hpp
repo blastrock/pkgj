@@ -65,6 +65,7 @@ struct DbItem
     std::string date;
     std::string app_version;
     std::string fw_version;
+    bool selected;
 };
 
 enum GameRegion

@@ -20,6 +20,7 @@ extern "C"
 #include "vitahttp.hpp"
 #include "zrif.hpp"
 #include "psm.hpp"
+#include "file.hpp"
 
 #include <vita2d.h>
 
@@ -62,6 +63,8 @@ int bottom_y;
 
 char search_text[256];
 char error_state[256];
+
+std::vector<DbItem *> selected_items; 
 
 // used for multiple things actually
 Mutex refresh_mutex("refresh_mutex");
@@ -600,7 +603,8 @@ void pkgi_do_main(Downloader& downloader, pkgi_input* input)
                 VITA_WIDTH - PKGI_MAIN_SCROLL_WIDTH - PKGI_MAIN_SCROLL_PADDING -
                         PKGI_MAIN_COLUMN_PADDING - sizew - col_name,
                 line_height);
-        pkgi_draw_text(col_name, y, color, item->name.c_str());
+        item->selected = std::find(selected_items.begin(), selected_items.end(), item) != selected_items.end();
+        pkgi_draw_text(col_name, y, item->selected ? PKGI_COLOR_TEXT_SELECTED : PKGI_COLOR_TEXT , item->name.c_str());
         pkgi_clip_remove();
 
         y += font_height + PKGI_MAIN_ROW_PADDING;
@@ -675,7 +679,35 @@ void pkgi_do_main(Downloader& downloader, pkgi_input* input)
         {
             pkgi_start_download(downloader, *item);
         }
-        else
+        else if (mode == ModeDlcs)
+        {
+            if (selected_items.empty())
+            {
+                if (downloader.is_in_queue(mode_to_type(mode), item->content))
+                {
+                    downloader.remove_from_queue(mode_to_type(mode), item->content);
+                    item->presence = PresenceUnknown;
+                }
+                else
+                    pkgi_install_package(downloader, item);
+            }
+            else
+            {
+                for(int i = 0; i < selected_items.size(); i++)
+                {
+                    if (downloader.is_in_queue(mode_to_type(mode), selected_items[i]->content))
+                    {
+                        downloader.remove_from_queue(mode_to_type(mode), selected_items[i]->content);
+                        selected_items[i]->content = PresenceUnknown;
+                    }
+                    else
+                        pkgi_install_package(downloader, selected_items[i]);
+                }
+                selected_items.clear();
+            }
+                
+        }
+        else 
         {
             if (downloader.is_in_queue(mode_to_type(mode), item->content))
             {
@@ -684,6 +716,22 @@ void pkgi_do_main(Downloader& downloader, pkgi_input* input)
             }
             else
                 pkgi_install_package(downloader, item);
+        }
+    }
+    else if (input && (input->pressed & PKGI_BUTTON_S))
+    {
+        if (mode == ModeDlcs) 
+        {
+            input->pressed &= ~PKGI_BUTTON_S;
+            DbItem* item = db->get(selected_item);
+            if(std::find(selected_items.begin(), selected_items.end(), item) != selected_items.end())
+            {
+                selected_items.erase(std::find(selected_items.begin(),selected_items.end(), item));
+            }
+            else if(selected_items.size() < 32 - pkgi_list_dir_contents("ux0:bgdl/t").size())
+            {
+                selected_items.push_back(item);
+            }
         }
     }
     else if (input && (input->pressed & PKGI_BUTTON_T))
@@ -868,7 +916,11 @@ void pkgi_do_tail(Downloader& downloader)
         pkgi_snprintf(text, sizeof(text), "Idle");
 
     pkgi_draw_text(0, bottom_y, PKGI_COLOR_TEXT_TAIL, text);
-
+    if (mode == ModeDlcs) 
+    {
+        pkgi_snprintf(text, sizeof(text), "Selected items: %d/%d", selected_items.size(), 32 - pkgi_list_dir_contents("ux0:bgdl/t").size());
+        pkgi_draw_text((VITA_WIDTH - pkgi_text_width(text)) / 2, bottom_y, PKGI_COLOR_TEXT_TAIL, text);
+    }
     const auto second_line = bottom_y + font_height + PKGI_MAIN_ROW_PADDING;
 
     uint32_t count = db->count();
@@ -937,7 +989,9 @@ void pkgi_do_tail(Downloader& downloader)
             else if (item && item->presence != PresenceInstalled)
                 bottom_text += fmt::format("{} install ", pkgi_get_ok_str());
         }
-        bottom_text += PKGI_UTF8_T " menu";
+        bottom_text += PKGI_UTF8_T " menu ";
+        if (mode == ModeDlcs)
+            bottom_text += PKGI_UTF8_S " select";
     }
 
     pkgi_clip_set(
@@ -1317,6 +1371,8 @@ int main()
                 else
                 {
                     MenuResult mres = pkgi_menu_result();
+                    if (mres != MenuResultCancel)
+                        selected_items.clear();
                     switch (mres)
                     {
                     case MenuResultSearch:
