@@ -85,7 +85,7 @@ pkgj is shipped with valid default URLs. If you wish to change some settings, th
 
 7. Can't download Updates or DLCs on my PSTV
 
-    This error is caused by AntiBlackList. To fix it, completely undo then uninstall AntiBlackList and install [DolcePolce](https://forum.devchroma.nl/index.php/topic,58.0.html) plugin instead.
+    This error is caused by AntiBlackList. To fix it, completely undo then uninstall AntiBlackList and install [DolcePolce](https://silica.codes/Li/dolcepolce) plugin instead.
 
 8. How do I use compatibility packs?
 
@@ -159,4 +159,5 @@ puff.h and puff.c files are under [zlib][] license.
 # Donating
 
 Bitcoin: 128vikqd3AyNEXEiU5uSJvCrRq1e3kRX6n
+
 Monero: 45sCwEFcPD9ZfwD2UKt6gcG3vChFrMmJHUmVVBUWwPFoPsjmkzvN7i9DKn4pUkyif5axgbnYNqU3NCqugudjTWqdFv5uKQV
