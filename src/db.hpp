@@ -49,8 +49,21 @@ enum DbFilter
     DbFilterAll = DbFilterAllRegions,
 };
 
+enum Mode
+{
+    ModeGames,
+    ModeDlcs,
+    ModeDemos,
+    ModeThemes,
+    ModePsmGames,
+    ModePsxGames,
+    ModePspGames,
+    ModePspDlcs,
+};
+
 struct DbItem
 {
+    Mode mode;
     DbPresence presence;
     std::string titleid;
     std::string content;
@@ -76,18 +89,6 @@ enum GameRegion
     RegionUSA,
     RegionINT,
     RegionUnknown,
-};
-
-enum Mode
-{
-    ModeGames,
-    ModeDlcs,
-    ModeDemos,
-    ModeThemes,
-    ModePsmGames,
-    ModePsxGames,
-    ModePspGames,
-    ModePspDlcs,
 };
 
 #define MODE_IS_PSPEMU(x) \
