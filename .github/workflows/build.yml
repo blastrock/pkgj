@@ -5,15 +5,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install apt dependencies
-        run: sudo apt-get install -y ninja-build g++-12
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-          cache: 'pip'
-      - name: Install python dependencies
-        run: sudo pip3 install poetry==1.3.2
+        run: sudo apt-get install -y ninja-build g++-12 python3-poetry
       - uses: actions/setup-python@v4
         with:
           python-version: '3.9'
@@ -21,18 +15,18 @@ jobs:
       - name: Cache Conan packages
         id: cache-conan
         if: ${{ github.event.ref == 'refs/heads/master' }}
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.conan2/p
           key: ${{ runner.os }}-conan
       - run: ci/ci.sh
       - name: Upload linux build
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pkgj_cli
           path: ci/buildhost/pkgj_cli
       - name: Upload vita build
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pkgj.vpk
           path: ci/build/pkgj.vpk
@@ -41,7 +35,7 @@ jobs:
     if: ${{ startsWith(github.event.ref, 'refs/tags/v') }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: last
       - name: Remove previous version
@@ -49,7 +43,7 @@ jobs:
           rm *.vpk
           refname=${{ github.ref_name }}
           echo -n ${refname:1} > version
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: pkgj.vpk
       - uses: svenstaro/upload-release-action@v2

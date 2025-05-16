@@ -1,5 +1,5 @@
 [tool_requires]
-vitasdk-toolchain/2.498@blastrock/pkgj
+vitasdk-toolchain/2.527@blastrock/pkgj
 
 [settings]
 os=PSVita

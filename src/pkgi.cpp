@@ -30,6 +30,7 @@ extern "C"
 #include <set>
 
 #include <psp2common/npdrm.h>
+#include <psp2/io/stat.h>
 
 #include <cstddef>
 #include <cstring>
