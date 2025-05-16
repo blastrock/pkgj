@@ -476,6 +476,7 @@ void TitleDatabase::reload(
             if (!(region_filter & DbFilterInstalled) ||
                 installed_games.find(titleid) != installed_games.end())
                 db.push_back(DbItem{
+                        mode,
                         PresenceUnknown,
                         titleid,
                         content,
@@ -490,6 +491,7 @@ void TitleDatabase::reload(
                         last_modification,
                         app_version,
                         fw_version,
+                        false,
                 });
         }
         catch (const std::exception& e)

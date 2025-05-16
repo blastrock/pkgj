@@ -8,6 +8,7 @@ extern "C"
 #include "pkgi.hpp"
 
 static int menu_search_clear;
+static int menu_selected_clear;
 
 static Config menu_config;
 static uint32_t menu_selected;
@@ -27,6 +28,7 @@ typedef enum
     MenuFilter,
     MenuRefresh,
     MenuShow,
+    MenuSelectedClear,
 } MenuType;
 
 typedef struct
@@ -64,6 +66,8 @@ static const MenuEntry menu_entries[] = {
         {MenuShow, "Show PSP games", 8},
         {MenuShow, "Show PSP DLCs", 128},
         {MenuShow, "Show PSM games", 16},
+
+        {MenuSelectedClear, "Clear selected", 0},
 };
 
 int pkgi_menu_is_open(void)
@@ -81,9 +85,10 @@ void pkgi_menu_get(Config* config)
     *config = menu_config;
 }
 
-void pkgi_menu_start(int search_clear, const Config* config, int allow_refresh)
+void pkgi_menu_start(int search_clear, int selected_clear, const Config* config, int allow_refresh)
 {
     menu_search_clear = search_clear;
+    menu_selected_clear = selected_clear;
     menu_width = 1;
     menu_delta = 1;
     menu_config = *config;
@@ -136,6 +141,8 @@ int pkgi_do_menu(pkgi_input* input)
         } while (menu_entries[menu_selected].type == MenuText ||
                  (menu_entries[menu_selected].type == MenuSearchClear &&
                   !menu_search_clear) ||
+                  (menu_entries[menu_selected].type == MenuSelectedClear &&
+                   (menu_search_clear || !menu_selected_clear)) ||
                  (menu_entries[menu_selected].type == MenuShow &&
                   !(menu_entries[menu_selected].value & menu_allow_refresh)));
     }
@@ -155,6 +162,8 @@ int pkgi_do_menu(pkgi_input* input)
         } while (menu_entries[menu_selected].type == MenuText ||
                  (menu_entries[menu_selected].type == MenuSearchClear &&
                   !menu_search_clear) ||
+                 (menu_entries[menu_selected].type == MenuSelectedClear &&
+                   (menu_search_clear || !menu_selected_clear)) ||
                  (menu_entries[menu_selected].type == MenuShow &&
                   !(menu_entries[menu_selected].value & menu_allow_refresh)));
     }
@@ -226,6 +235,13 @@ int pkgi_do_menu(pkgi_input* input)
             menu_delta = -1;
             return 1;
         }
+        else if (type == MenuSelectedClear)
+        {
+            menu_selected--;
+            menu_result = MenuResultSelectedClear;
+            menu_delta = -1;
+            return 1;
+        }
         else if (type == MenuSort)
         {
             DbSort value = (DbSort)menu_entries[menu_selected].value;
@@ -267,6 +283,10 @@ int pkgi_do_menu(pkgi_input* input)
         {
             continue;
         }
+        else if (type == MenuSelectedClear && (menu_search_clear || !menu_selected_clear))
+        {
+            continue;
+        }
         else if (type == MenuRefresh)
             y += font_height / 3;
         else if (type == MenuShow)
@@ -284,7 +304,7 @@ int pkgi_do_menu(pkgi_input* input)
 
         char text[64];
         if (type == MenuSearch || type == MenuSearchClear || type == MenuText ||
-            type == MenuRefresh || type == MenuShow)
+            type == MenuRefresh || type == MenuShow || type == MenuSelectedClear)
         {
             pkgi_strncpy(text, sizeof(text), entry->text);
         }
